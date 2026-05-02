@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐱 Kitty Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root{
+          --pink:#ff9a9e;--pink2:#fecfef;--purple:#764ba2;--purple2:#667eea;
+          --p50:#fff5f8;--p100:#ffe0ec;--p300:#ff9ab8;--p400:#ff6b9d;--p500:#e84393;
+          --v100:#ede9fe;--bg:#f8f6fb;
+          --txt:#2d2d3a;--soft:#6b6b8a;--muted:#a8a8c0;
+          --card:#fff;--border:#eeeaf4;
+          --sh1:0 2px 12px rgba(120,80,180,.08);
+          --sh2:0 8px 32px rgba(120,80,180,.14);
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:'Nunito',sans-serif;background:var(--bg);min-height:100vh;color:var(--txt)}
+        .topbar{position:sticky;top:0;z-index:200;background:rgba(255,255,255,.88);backdrop-filter:blur(14px);border-bottom:1.5px solid var(--border);padding:0 28px;height:58px;display:flex;align-items:center;justify-content:space-between}
+        .tb-logo{display:flex;align-items:center;gap:10px}
+        .tb-logo .logo-icon{font-size:1.6rem}
+        .tb-logo span{font-size:1.05rem;font-weight:900;color:var(--purple)}
+        .tb-center{font-size:.82rem;color:var(--muted);font-weight:700}
+        .tb-right{display:flex;align-items:center;gap:10px}
+        .tb-user{display:none;align-items:center;gap:8px}
+        .tb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--pink2));display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:800;color:#fff}
+        .tb-name{font-size:.82rem;font-weight:700;color:var(--soft)}
+        .tb-btn{padding:7px 16px;border-radius:20px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;background:linear-gradient(135deg,var(--pink),var(--pink2));color:#444;transition:opacity .2s}
+        .tb-btn:hover{opacity:.85}
+        .tb-btn.outline{background:none;border:2px solid var(--pink);color:var(--p400);display:none}
+        .dashboard{padding:24px 28px 120px;max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+        .dash-row{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+        .dash-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--sh1);display:flex;flex-direction:column;gap:12px;transition:border-color .2s,box-shadow .2s}
+        .dash-card:hover{border-color:var(--p300);box-shadow:var(--sh2)}
+        .card-head{display:flex;align-items:center;justify-content:space-between}
+        .card-head h3{font-size:.92rem;font-weight:800;color:var(--txt)}
+        .ch-actions{display:flex;gap:6px}
+        .icon-btn{background:var(--p50);border:none;border-radius:10px;width:32px;height:32px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
+        .icon-btn:hover{background:var(--p100)}
+        .clock-card{background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);border-color:transparent}
+        .clock-card:hover{border-color:#444}
+        .clock-time{font-size:3rem;font-weight:900;color:#fff;letter-spacing:-2px;font-variant-numeric:tabular-nums;line-height:1}
+        .clock-date{font-size:.8rem;color:rgba(255,255,255,.5);font-weight:700;margin-top:4px}
+        .clock-greeting{font-size:1rem;font-weight:800;color:var(--pink);margin-top:4px}
+        .wc-top{display:flex;align-items:center;justify-content:space-between}
+        .card-label{font-size:.82rem;font-weight:800;color:var(--soft)}
+        .wc-search{display:flex;gap:6px}
+        .inp{padding:8px 12px;border:2px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.82rem;outline:none;transition:border-color .2s;background:var(--p50)}
+        .inp:focus{border-color:var(--p400)}
+        .inp.sm{width:110px}
+        .wc-main{display:flex;gap:14px;align-items:center}
+        .wc-icon{font-size:2.5rem}
+        .wc-temp{font-size:2rem;font-weight:900;color:var(--txt)}
+        .wc-desc{font-size:.8rem;color:var(--muted);font-weight:600}
+        .wc-extra{font-size:.75rem;color:var(--muted)}
+        .wc-hint{font-size:.7rem;color:var(--muted);text-align:right}
+        .quote-card{background:linear-gradient(135deg,var(--v100),var(--p50));justify-content:space-between}
+        .qc-top{font-size:.82rem;font-weight:800;color:var(--purple)}
+        .qc-text{font-size:.95rem;font-weight:700;color:var(--txt);line-height:1.5;font-style:italic}
+        .qc-author{font-size:.78rem;color:var(--p400);font-weight:700}
+        .qc-btn{align-self:flex-start;padding:7px 14px;border:none;border-radius:12px;background:white;color:var(--p400);font-size:.78rem;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;box-shadow:var(--sh1);transition:box-shadow .2s}
+        .qc-btn:hover{box-shadow:var(--sh2)}
+        .notes-area{flex:1;resize:none;padding:10px 12px;border:2px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.84rem;line-height:1.5;outline:none;min-height:120px;background:var(--p50);color:var(--txt);transition:border-color .2s}
+        .notes-area:focus{border-color:var(--p400)}
+        .notes-area::placeholder{color:var(--muted)}
+        .notes-footer{display:flex;justify-content:space-between;font-size:.72rem;color:var(--muted)}
+        .ns-saved{color:var(--p400);font-weight:700}
+        .timer-wrap{display:flex;justify-content:center}
+        .timer-ring{position:relative;width:130px;height:130px}
+        .timer-svg{width:100%;height:100%;transform:rotate(-90deg)}
+        .tr-bg{fill:none;stroke:var(--border);stroke-width:8}
+        .tr-fill{fill:none;stroke:var(--pink);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .5s linear}
+        .timer-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+        .ti-time{font-size:1.6rem;font-weight:900;color:var(--txt)}
+        .ti-lbl{font-size:.68rem;color:var(--muted);font-weight:700}
+        .timer-btns{display:flex;gap:8px}
+        .tbtn{flex:1;padding:9px;border:none;border-radius:14px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;transition:opacity .2s,transform .2s}
+        .tbtn.start{background:linear-gradient(135deg,var(--pink),var(--pink2));color:#444}
+        .tbtn.reset{background:var(--p50);color:var(--soft)}
+        .tbtn:hover{opacity:.85;transform:translateY(-1px)}
+        .tp-btn{padding:4px 10px;border:2px solid var(--border);border-radius:10px;background:none;cursor:pointer;font-size:.72rem;font-weight:700;color:var(--muted);font-family:'Nunito',sans-serif;transition:all .2s}
+        .tp-btn:hover{border-color:var(--pink);color:var(--p400)}
+        .timer-info{font-size:.72rem;color:var(--muted);text-align:center}
+        .timer-custom-row{display:flex;gap:6px;align-items:center}
+        .tasks-mini-stats{display:flex;gap:8px}
+        .tms-item{flex:1;background:var(--p50);border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:2px}
+        .tms-item b{font-size:1.1rem;font-weight:900}
+        .tms-item small{font-size:.65rem;color:var(--muted);font-weight:700}
+        .tms-item.pink b{color:var(--p400)}
+        .tms-item.green b{color:#22c55e}
+        .tms-item.red b{color:#ef4444}
+        .tasks-mini-list{display:flex;flex-direction:column;gap:6px;flex:1;overflow-y:auto;max-height:140px}
+        .tm-item{display:flex;align-items:center;gap:8px;padding:8px 10px;background:var(--p50);border-radius:10px;font-size:.8rem;font-weight:700}
+        .tm-item.done-t{opacity:.5;text-decoration:line-through}
+        .tm-circle{width:18px;height:18px;border-radius:50%;flex-shrink:0;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.6rem;transition:all .2s}
+        .tm-placeholder{text-align:center;padding:16px;color:var(--muted);font-size:.8rem}
+        .tm-placeholder span{font-size:1.5rem;display:block;margin-bottom:6px}
+        .tm-status-badge{font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:8px;flex-shrink:0}
+        .st-done{background:#dcfce7;color:#16a34a}
+        .st-todo{background:#f3f4f6;color:#6b7280}
+        .dash-task-form{display:flex;flex-direction:column;gap:4px;padding:8px;background:var(--p50);border-radius:12px}
+        .habits-list{display:flex;flex-direction:column;gap:7px;flex:1}
+        .habit-item{display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--p50);border-radius:12px}
+        .h-check{width:26px;height:26px;border-radius:50%;flex-shrink:0;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:all .2s}
+        .h-done .h-check{background:linear-gradient(135deg,var(--pink),var(--pink2));border-color:var(--pink);color:#fff}
+        .h-name{flex:1;font-size:.82rem;font-weight:700;color:var(--txt)}
+        .h-done .h-name{color:var(--muted);text-decoration:line-through}
+        .h-streak{font-size:.7rem;font-weight:800;color:var(--p400)}
+        .h-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;transition:color .2s}
+        .h-del:hover{color:#ef4444}
+        .habit-form{display:none;gap:8px;align-items:center}
+        .hf-btns{display:flex;gap:6px}
+        .btn-main{padding:9px 18px;border:none;border-radius:14px;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.82rem;font-weight:800;background:linear-gradient(135deg,var(--pink),var(--pink2));color:#444;transition:opacity .2s}
+        .btn-main:hover{opacity:.85}
+        .btn-main.sm{padding:6px 14px;font-size:.78rem}
+        .habits-empty{text-align:center;padding:18px;color:var(--muted);font-size:.8rem}
+        .hidden{display:none!important}
+        .mood-q{font-size:.8rem;color:var(--muted);font-weight:700}
+        .mood-emojis{display:flex;gap:8px;justify-content:center}
+        .me{background:none;border:2px solid var(--border);border-radius:14px;font-size:1.5rem;padding:7px;cursor:pointer;transition:all .2s}
+        .me:hover,.me.picked{border-color:var(--pink);background:var(--p50);transform:scale(1.12)}
+        .mood-today{font-size:1.2rem}
+        .mood-history-label{font-size:.7rem;color:var(--muted);font-weight:700;margin-top:4px}
+        .mood-bars{display:flex;gap:5px;align-items:flex-end;height:48px}
+        .mb-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1}
+        .mb-bar{width:100%;border-radius:4px 4px 0 0;transition:height .4s;min-height:4px}
+        .mb-day{font-size:.6rem;color:var(--muted);font-weight:700}
+        .ql-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;max-height:200px;overflow-y:auto}
+        .ql{display:flex;align-items:center;gap:7px;padding:9px 11px;background:var(--p50);border-radius:12px;font-size:.78rem;font-weight:700;color:var(--soft);text-decoration:none;transition:background .2s,color .2s}
+        .ql:hover{background:var(--p100);color:var(--p400)}
+        .ql span{font-size:1rem}
+        .paw{position:fixed;pointer-events:none;opacity:.04;font-size:4rem;z-index:0}
+        #kitty-btn{position:fixed;bottom:32px;right:32px;width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#ff9a9e,#fecfef);border:3px solid rgba(255,255,255,.8);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:2rem;box-shadow:0 6px 28px rgba(255,154,158,.65);z-index:1000;animation:float 3s ease-in-out infinite;transition:box-shadow .3s}
+        #kitty-btn:hover{box-shadow:0 8px 36px rgba(255,154,158,.9)}
+        .badge{position:absolute;top:-4px;right:-4px;width:22px;height:22px;background:#ff4757;border-radius:50%;border:2px solid white;font-size:.63rem;display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+        #chat-widget{position:fixed;bottom:120px;right:32px;width:380px;height:590px;background:#fff;border-radius:24px;box-shadow:0 24px 64px rgba(0,0,0,.18);display:none;flex-direction:column;overflow:hidden;z-index:999}
+        #chat-widget.open{display:flex;animation:slideUp .28s cubic-bezier(.22,.68,0,1.2)}
+        @keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .w-header{background:linear-gradient(135deg,#ff9a9e,#fecfef);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+        .w-hl{display:flex;align-items:center;gap:10px}
+        .w-av{width:42px;height:42px;border-radius:50%;background:white;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+        .w-info h3{font-size:.93rem;font-weight:700;color:#444}
+        .w-info span{font-size:.7rem;color:#888}
+        .online{display:inline-block;width:8px;height:8px;background:#2ed573;border-radius:50%;margin-right:4px}
+        .w-close{background:none;border:none;cursor:pointer;font-size:1.1rem;color:#999;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .2s}
+        .w-close:hover{background:rgba(0,0,0,.08)}
+        #auth-section{flex:1;padding:22px 22px;display:flex;flex-direction:column;justify-content:center;overflow-y:auto}
+        .auth-title{text-align:center;font-size:1.15rem;font-weight:700;color:#333;margin-bottom:6px}
+        .auth-sub{text-align:center;font-size:.8rem;color:#aaa;margin-bottom:16px}
+        .auth-tabs{display:flex;background:#f5f5f5;border-radius:12px;padding:4px;margin-bottom:14px}
+        .a-tab{flex:1;padding:8px;border:none;background:none;border-radius:10px;cursor:pointer;font-size:.82rem;font-weight:600;color:#bbb;transition:all .2s;font-family:'Nunito',sans-serif}
+        .a-tab.active{background:white;color:#ff6b9d;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+        .auth-form{display:none;flex-direction:column;gap:10px}
+        .auth-form.active{display:flex}
+        .f-in{padding:11px 15px;border:2px solid #f0f0f0;border-radius:12px;font-size:.87rem;outline:none;transition:border-color .2s;font-family:'Nunito',sans-serif}
+        .f-in:focus{border-color:#ff9a9e}
+        .f-btn{padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#ff9a9e,#fecfef);font-size:.9rem;font-weight:700;color:#444;cursor:pointer;transition:opacity .2s,transform .2s;font-family:'Nunito',sans-serif}
+        .f-btn:hover{opacity:.9;transform:translateY(-1px)}
+        /* Google кнопка */
+        .google-btn{padding:11px;border:2px solid #e0e0e0;border-radius:12px;background:white;font-size:.87rem;font-weight:700;color:#444;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;font-family:'Nunito',sans-serif;text-decoration:none}
+        .google-btn:hover{border-color:#ff9a9e;background:#fff5f8}
+        .divider{display:flex;align-items:center;gap:10px;color:#ccc;font-size:.75rem;margin:4px 0}
+        .divider::before,.divider::after{content:'';flex:1;height:1px;background:#f0f0f0}
+        .auth-msg{font-size:.76rem;color:#ff4757;text-align:center;min-height:16px;margin-top:4px}
+        #main-section{flex:1;display:none;flex-direction:column;overflow:hidden}
+        .tabs{display:flex;border-bottom:2px solid #f5f5f5;flex-shrink:0}
+        .t-btn{flex:1;padding:10px 4px;border:none;background:none;cursor:pointer;font-size:.76rem;font-weight:600;color:#ccc;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;font-family:'Nunito',sans-serif}
+        .t-btn.active{color:#ff6b9d;border-bottom-color:#ff6b9d}
+        #chat-tab{flex:1;display:flex;flex-direction:column;overflow:hidden}
+        #messages{flex:1;overflow-y:auto;padding:12px 12px 6px;display:flex;flex-direction:column;gap:9px}
+        #messages::-webkit-scrollbar{width:3px}
+        #messages::-webkit-scrollbar-thumb{background:#eee;border-radius:2px}
+        .msg{display:flex;align-items:flex-end;gap:7px}
+        .msg.user{flex-direction:row-reverse}
+        .msg-av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.85rem;background:linear-gradient(135deg,#ff9a9e,#fecfef)}
+        .msg.user .msg-av{background:linear-gradient(135deg,#667eea,#764ba2)}
+        .msg-wrap{display:flex;flex-direction:column;max-width:76%}
+        .msg.user .msg-wrap{align-items:flex-end}
+        .bubble{padding:9px 13px;border-radius:18px;font-size:.84rem;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+        .msg.bot .bubble{background:#f5f5f5;color:#333;border-bottom-left-radius:4px}
+        .msg.user .bubble{background:linear-gradient(135deg,#ff9a9e,#fecfef);color:#333;border-bottom-right-radius:4px}
+        .msg-time{font-size:.66rem;color:#ccc;margin-top:3px}
+        .typing{display:flex;gap:4px;padding:10px 13px;background:#f5f5f5;border-radius:18px;border-bottom-left-radius:4px;width:fit-content}
+        .dot{width:6px;height:6px;background:#ccc;border-radius:50%;animation:td 1s infinite}
+        .dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+        @keyframes td{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+        .chat-row{padding:9px 13px;border-top:1px solid #f5f5f5;display:flex;gap:8px;align-items:center;flex-shrink:0}
+        .chat-in{flex:1;padding:9px 13px;border:2px solid #f0f0f0;border-radius:20px;font-size:.84rem;outline:none;transition:border-color .2s;font-family:'Nunito',sans-serif}
+        .chat-in:focus{border-color:#ff9a9e}
+        .send-btn{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#ff9a9e,#fecfef);border:none;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:transform .2s}
+        .send-btn:hover{transform:scale(1.12)}
+        #tasks-tab{flex:1;display:none;flex-direction:column;overflow:hidden}
+        #tasks-list{flex:1;overflow-y:auto;padding:10px}
+        #tasks-list::-webkit-scrollbar{width:3px}
+        #tasks-list::-webkit-scrollbar-thumb{background:#eee;border-radius:2px}
+        .empty{text-align:center;padding:36px 20px;color:#ccc;font-size:.83rem}
+        .empty .ei{font-size:2.2rem;margin-bottom:8px}
+        .task-item{display:flex;align-items:center;gap:9px;padding:10px 12px;background:#fafafa;border-radius:12px;margin-bottom:6px;transition:background .2s}
+        .task-item:hover{background:#f5f5f5}
+        .t-check{width:22px;height:22px;border-radius:50%;flex-shrink:0;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.7rem;transition:all .2s;color:transparent}
+        .task-item.done .t-check{background:linear-gradient(135deg,#ff9a9e,#fecfef);border-color:#ff9a9e;color:white}
+        .t-title{flex:1;font-size:.84rem;color:#333}
+        .task-item.done .t-title{text-decoration:line-through;color:#ccc}
+        .t-del{background:none;border:none;cursor:pointer;color:#ddd;font-size:.82rem;padding:3px;transition:color .2s}
+        .t-del:hover{color:#ff4757}
+        .task-row{padding:9px 13px;border-top:1px solid #f5f5f5;display:flex;gap:8px;flex-shrink:0}
+        .task-in{flex:1;padding:9px 13px;border:2px solid #f0f0f0;border-radius:20px;font-size:.84rem;outline:none;transition:border-color .2s;font-family:'Nunito',sans-serif}
+        .task-in:focus{border-color:#ff9a9e}
+        .add-btn{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#ff9a9e,#fecfef);border:none;cursor:pointer;font-size:1.35rem;color:#555;display:flex;align-items:center;justify-content:center;transition:transform .2s;line-height:1}
+        .add-btn:hover{transform:scale(1.12)}
+        #notes-tab{flex:1;display:none;flex-direction:column;overflow:hidden}
+        .note-form{padding:10px 12px;border-bottom:1px solid #f5f5f5;display:flex;flex-direction:column;gap:7px;flex-shrink:0}
+        .note-title-in{padding:8px 12px;border:2px solid #f0f0f0;border-radius:12px;font-size:.82rem;outline:none;transition:border-color .2s;font-family:'Nunito',sans-serif}
+        .note-title-in:focus{border-color:#ff9a9e}
+        .note-body-in{padding:8px 12px;border:2px solid #f0f0f0;border-radius:12px;font-size:.82rem;outline:none;resize:none;height:62px;font-family:'Nunito',sans-serif;transition:border-color .2s}
+        .note-body-in:focus{border-color:#ff9a9e}
+        .note-save-btn{padding:8px;border:none;border-radius:12px;background:linear-gradient(135deg,#ff9a9e,#fecfef);font-size:.82rem;font-weight:700;color:#444;cursor:pointer;transition:opacity .2s;font-family:'Nunito',sans-serif}
+        .note-save-btn:hover{opacity:.9}
+        #notes-list{flex:1;overflow-y:auto;padding:10px}
+        #notes-list::-webkit-scrollbar{width:3px}
+        #notes-list::-webkit-scrollbar-thumb{background:#eee;border-radius:2px}
+        .note-card{background:#fafafa;border-radius:12px;padding:11px 13px;margin-bottom:8px;position:relative}
+        .note-card:hover{background:#f5f5f5}
+        .note-card-title{font-size:.84rem;font-weight:700;color:#333;margin-bottom:4px;padding-right:26px}
+        .note-card-body{font-size:.78rem;color:#777;line-height:1.4;white-space:pre-wrap;word-break:break-word}
+        .note-card-date{font-size:.68rem;color:#ccc;margin-top:5px}
+        .note-del{position:absolute;top:10px;right:10px;background:none;border:none;cursor:pointer;color:#ddd;font-size:.8rem;transition:color .2s}
+        .note-del:hover{color:#ff4757}
+        #timer-tab{flex:1;display:none;flex-direction:column;overflow:hidden;align-items:center;justify-content:center;padding:20px}
+        .timer-modes{display:flex;gap:8px;margin-bottom:22px}
+        .tm-btn{padding:7px 14px;border:2px solid #f0f0f0;border-radius:20px;background:none;font-size:.78rem;font-weight:600;color:#bbb;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif}
+        .tm-btn.active{border-color:#ff9a9e;color:#ff6b9d;background:#fff5f5}
+        .timer-ring-w{position:relative;margin-bottom:22px}
+        .timer-ring-w svg{transform:rotate(-90deg)}
+        .ring-bg{fill:none;stroke:#f0f0f0;stroke-width:8}
+        .ring-progress{fill:none;stroke:url(#ringGrad);stroke-width:8;stroke-linecap:round;transition:stroke-dashoffset .8s linear}
+        .timer-time{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+        .timer-time .big{font-size:2.2rem;font-weight:800;color:#333;line-height:1}
+        .timer-time .lbl{font-size:.72rem;color:#aaa;margin-top:4px}
+        .timer-btns-w{display:flex;gap:12px;margin-bottom:18px}
+        .t-action{padding:11px 24px;border:none;border-radius:20px;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Nunito',sans-serif}
+        .t-start{background:linear-gradient(135deg,#ff9a9e,#fecfef);color:#444}
+        .t-reset{background:#f5f5f5;color:#888}
+        .t-start:hover,.t-reset:hover{transform:translateY(-1px)}
+        .timer-sessions{font-size:.78rem;color:#aaa;text-align:center}
+        .timer-sessions span{font-weight:700;color:#ff9a9e}
+        .w-footer{padding:7px 16px;background:#fafafa;border-top:1px solid #f5f5f5;display:flex;align-items:center;justify-content:space-between;font-size:.74rem;color:#bbb;flex-shrink:0}
+        .logout-btn{background:none;border:none;color:#ff9a9e;cursor:pointer;font-size:.74rem;font-weight:600;font-family:'Nunito',sans-serif}
+        .logout-btn:hover{text-decoration:underline}
+        @media(max-width:900px){.dash-row{grid-template-columns:1fr 1fr}}
+        @media(max-width:600px){.dash-row{grid-template-columns:1fr}.dashboard{padding:14px 12px 120px}#chat-widget{width:calc(100vw - 16px);right:8px}}
+    </style>
+</head>
+<body>
+
+<div class="paw" style="top:8%;left:4%">🐾</div>
+<div class="paw" style="top:65%;left:8%;font-size:2.5rem">🐾</div>
+<div class="paw" style="top:15%;right:12%">🐾</div>
+<div class="paw" style="bottom:12%;left:22%;font-size:2.5rem">🐾</div>
+<div class="paw" style="top:45%;right:6%;font-size:2rem">🐾</div>
+
+<header class="topbar">
+    <div class="tb-logo"><span class="logo-icon">🐱</span><span>Kitty Assistant</span></div>
+    <div class="tb-center" id="topbarDate"></div>
+    <div class="tb-right">
+        <div class="tb-user" id="tbUser">
+            <div class="tb-avatar" id="tbAvatar">К</div>
+            <span class="tb-name" id="tbName">Пользователь</span>
+        </div>
+        <button class="tb-btn" id="tbLoginBtn" onclick="toggleChat()">Войти</button>
+        <button class="tb-btn outline" id="tbLogoutBtn" onclick="doLogout()">Выйти</button>
+    </div>
+</header>
+
+<main class="dashboard">
+    <div class="dash-row">
+        <div class="dash-card clock-card">
+            <div class="clock-time" id="clockTime">00:00:00</div>
+            <div class="clock-date" id="clockDate">—</div>
+            <div class="clock-greeting" id="clockGreeting">Привет! 🐾</div>
+        </div>
+        <div class="dash-card">
+            <div class="wc-top">
+                <span class="card-label">🌤 Погода</span>
+                <div class="wc-search">
+                    <input class="inp sm" id="cityInput" placeholder="Город..." value="Astana">
+                    <button class="icon-btn" onclick="loadWeather()" title="Обновить">🔄</button>
+                </div>
+            </div>
+            <div class="wc-main">
+                <div class="wc-icon" id="wIcon">☁️</div>
+                <div>
+                    <div class="wc-temp" id="wTemp">—°C</div>
+                    <div class="wc-desc" id="wDesc">Нажми 🔄</div>
+                    <div class="wc-extra" id="wExtra"></div>
+                </div>
+            </div>
+            <div class="wc-hint">Данные: wttr.in</div>
+        </div>
+        <div class="dash-card quote-card">
+            <div class="qc-top">💭 Цитата дня</div>
+            <div class="qc-text" id="quoteText"></div>
+            <div class="qc-author" id="quoteAuthor"></div>
+            <button class="qc-btn" onclick="nextQuote()">Следующая →</button>
+        </div>
+    </div>
+
+    <div class="dash-row">
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>📝 Быстрые заметки</h3>
+                <div class="ch-actions">
+                    <button class="icon-btn" onclick="clearDashNote()" title="Очистить">🗑</button>
+                    <button class="icon-btn" onclick="downloadDashNote()" title="Скачать">⬇</button>
+                </div>
+            </div>
+            <textarea class="notes-area" id="dashNotesArea" placeholder="Записывай идеи... автосохраняется 🐱" oninput="onDashNoteInput()"></textarea>
+            <div class="notes-footer">
+                <span id="dashNotesChars">0 символов</span>
+                <span class="ns-saved" id="dashNotesSaved">💾 автосохранение</span>
+            </div>
+        </div>
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>⏱ Фокус-таймер</h3>
+                <div class="ch-actions">
+                    <button class="tp-btn" onclick="setDashTimer(25)">🍅 25м</button>
+                    <button class="tp-btn" onclick="setDashTimer(15)">15м</button>
+                    <button class="tp-btn" onclick="setDashTimer(5)">5м</button>
+                </div>
+            </div>
+            <div class="timer-custom-row">
+                <input class="inp sm" id="customMins" type="number" min="1" max="180" placeholder="Мин..." style="width:80px">
+                <input class="inp sm" id="customSecs" type="number" min="0" max="59" placeholder="Сек..." style="width:80px">
+                <button class="tp-btn" onclick="setDashTimerCustom()" style="padding:6px 12px">✔ Задать</button>
+            </div>
+            <div class="timer-wrap">
+                <div class="timer-ring">
+                    <svg viewBox="0 0 120 120" class="timer-svg">
+                        <circle class="tr-bg" cx="60" cy="60" r="50"/>
+                        <circle class="tr-fill" id="dTrFill" cx="60" cy="60" r="50" stroke-dasharray="314.16" stroke-dashoffset="0"/>
+                    </svg>
+                    <div class="timer-inner">
+                        <div class="ti-time" id="dTimerDisp">25:00</div>
+                        <div class="ti-lbl" id="dTimerLbl">Поехали!</div>
+                    </div>
+                </div>
+            </div>
+            <div class="timer-btns">
+                <button class="tbtn start" id="dTBtnStart" onclick="toggleDashTimer()">▶ Старт</button>
+                <button class="tbtn reset" onclick="resetDashTimer()">↺</button>
+            </div>
+        </div>
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>✅ Задачи</h3>
+                <button class="icon-btn" onclick="showDashTaskForm()" title="Добавить задачу">+</button>
+            </div>
+            <div class="dash-task-form hidden" id="dashTaskForm">
+                <input class="inp" id="dashTaskInp" placeholder="Новая задача..." onkeydown="if(event.key==='Enter')addDashTask()" style="width:100%">
+                <div style="display:flex;gap:6px;margin-top:6px">
+                    <button class="btn-main sm" onclick="addDashTask()">+</button>
+                    <button class="icon-btn" onclick="hideDashTaskForm()">✕</button>
+                </div>
+            </div>
+            <div class="tasks-mini-stats">
+                <div class="tms-item pink"><b id="tmTot">—</b><small>Всего</small></div>
+                <div class="tms-item green"><b id="tmDone">—</b><small>Готово</small></div>
+                <div class="tms-item red"><b id="tmOver">—</b><small>Осталось</small></div>
+            </div>
+            <div class="tasks-mini-list" id="tmList">
+                <div class="tm-placeholder"><span>🔐</span><p>Войди, чтобы увидеть задачи</p></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dash-row">
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>🌱 Привычки</h3>
+                <button class="icon-btn" onclick="showHabitForm()">+</button>
+            </div>
+            <div class="habits-list" id="habitsList"></div>
+            <div class="habit-form" id="habitForm">
+                <input class="inp" id="habitInp" placeholder="Новая привычка..." onkeydown="if(event.key==='Enter')saveHabit()" style="flex:1">
+                <div class="hf-btns">
+                    <button class="btn-main sm" onclick="saveHabit()">Добавить</button>
+                    <button class="icon-btn" onclick="hideHabitForm()">✕</button>
+                </div>
+            </div>
+            <div class="habits-empty hidden" id="habitsEmpty"><p>Нажми + чтобы добавить привычку!</p></div>
+        </div>
+        <div class="dash-card">
+            <div class="card-head">
+                <h3>🌈 Настроение</h3>
+                <span class="mood-today" id="moodToday"></span>
+            </div>
+            <p class="mood-q">Как ты себя чувствуешь?</p>
+            <div class="mood-emojis">
+                <button class="me" data-v="5" onclick="pickMood(5)" title="Отлично!">😄</button>
+                <button class="me" data-v="4" onclick="pickMood(4)" title="Хорошо">🙂</button>
+                <button class="me" data-v="3" onclick="pickMood(3)" title="Нормально">😐</button>
+                <button class="me" data-v="2" onclick="pickMood(2)" title="Грустно">😔</button>
+                <button class="me" data-v="1" onclick="pickMood(1)" title="Плохо">😞</button>
+            </div>
+            <div class="mood-history-label">Последние 7 дней:</div>
+            <div class="mood-bars" id="moodBars"></div>
+        </div>
+        <div class="dash-card">
+            <div class="card-head"><h3>🔗 Быстрые ссылки</h3></div>
+            <div class="ql-grid">
+                <a class="ql" href="/swagger-ui.html" target="_blank"><span>📖</span>Swagger UI</a>
+                <a class="ql" href="/h2-console" target="_blank"><span>🗃️</span>H2 Database</a>
+                <a class="ql" href="https://start.spring.io" target="_blank"><span>🌱</span>Spring Initializr</a>
+                <a class="ql" href="https://docs.oracle.com/en/java/javase/17/docs/api/" target="_blank"><span>☕</span>Java 17 API</a>
+                <a class="ql" href="https://docs.spring.io/spring-boot/docs/current/reference/html/" target="_blank"><span>📚</span>Spring Docs</a>
+                <a class="ql" href="https://github.com" target="_blank"><span>🐙</span>GitHub</a>
+                <a class="ql" href="https://stackoverflow.com" target="_blank"><span>💬</span>Stack Overflow</a>
+                <a class="ql" href="https://mvnrepository.com" target="_blank"><span>📦</span>Maven Repo</a>
+                <a class="ql" href="https://www.baeldung.com/spring-boot" target="_blank"><span>🎓</span>Baeldung</a>
+                <a class="ql" href="https://jwt.io" target="_blank"><span>🔐</span>JWT Debugger</a>
+                <a class="ql" href="https://regex101.com" target="_blank"><span>🔍</span>Regex101</a>
+                <a class="ql" href="https://jsonformatter.curiousconcept.com" target="_blank"><span>📋</span>JSON Formatter</a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<button id="kitty-btn" onclick="toggleChat()" title="Kitty Assistant">
+    🐱
+    <span class="badge" id="badge" style="display:none">1</span>
+</button>
+
+<div id="chat-widget">
+    <div class="w-header">
+        <div class="w-hl">
+            <div class="w-av">🐱</div>
+            <div class="w-info"><h3>Kitty Assistant</h3><span><span class="online"></span>ИИ активен</span></div>
+        </div>
+        <button class="w-close" onclick="toggleChat()">✕</button>
+    </div>
+    <div id="auth-section">
+        <div class="auth-title">Привет! 🐱</div>
+        <div class="auth-sub">Войди чтобы начать</div>
+
+        <!-- КНОПКА GOOGLE -->
+        <a class="google-btn" href="/oauth2/authorization/google">
+            <svg width="18" height="18" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            Войти через Google
+        </a>
+
+        <div class="divider">или</div>
+
+        <div class="auth-tabs">
+            <button class="a-tab active" onclick="switchAuth('login')">Войти</button>
+            <button class="a-tab" onclick="switchAuth('register')">Регистрация</button>
+        </div>
+        <div id="login-form" class="auth-form active">
+            <input id="l-u" type="text" class="f-in" placeholder="Логин">
+            <input id="l-p" type="password" class="f-in" placeholder="Пароль">
+            <button class="f-btn" onclick="doLogin()">Войти →</button>
+        </div>
+        <div id="reg-form" class="auth-form">
+            <input id="r-u" type="text" class="f-in" placeholder="Придумай логин">
+            <input id="r-p" type="password" class="f-in" placeholder="Придумай пароль">
+            <button class="f-btn" onclick="doRegister()">Создать аккаунт</button>
+        </div>
+        <div class="auth-msg" id="auth-msg"></div>
+    </div>
+    <div id="main-section">
+        <div class="tabs">
+            <button class="t-btn active" onclick="switchTab('chat')">💬 Чат</button>
+            <button class="t-btn" onclick="switchTab('tasks')">✅ Задачи</button>
+            <button class="t-btn" onclick="switchTab('notes')">📝 Заметки</button>
+            <button class="t-btn" onclick="switchTab('timer')">⏱ Таймер</button>
+        </div>
+        <div id="chat-tab">
+            <div id="messages"></div>
+            <div class="chat-row">
+                <input id="msg-in" type="text" class="chat-in" placeholder="Спроси что угодно..." onkeydown="if(event.key==='Enter')sendMsg()">
+                <button class="send-btn" onclick="sendMsg()">➤</button>
+            </div>
+        </div>
+        <div id="tasks-tab">
+            <div id="tasks-list"></div>
+            <div class="task-row">
+                <input id="task-in" type="text" class="task-in" placeholder="Новая задача..." onkeydown="if(event.key==='Enter')addTask()">
+                <button class="add-btn" onclick="addTask()">+</button>
+            </div>
+        </div>
+        <div id="notes-tab">
+            <div class="note-form">
+                <input id="note-title" type="text" class="note-title-in" placeholder="Заголовок заметки...">
+                <textarea id="note-body" class="note-body-in" placeholder="Текст заметки..."></textarea>
+                <button class="note-save-btn" onclick="addNote()">💾 Сохранить заметку</button>
+            </div>
+            <div id="notes-list"></div>
+        </div>
+        <div id="timer-tab">
+            <svg width="0" height="0"><defs><linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#ff9a9e"/><stop offset="100%" style="stop-color:#fecfef"/></linearGradient></defs></svg>
+            <div class="timer-modes">
+                <button class="tm-btn active" onclick="setMode('work',25)">Работа</button>
+                <button class="tm-btn" onclick="setMode('short',5)">Перерыв</button>
+                <button class="tm-btn" onclick="setMode('long',15)">Длинный</button>
+            </div>
+            <div class="timer-ring-w">
+                <svg width="160" height="160" viewBox="0 0 160 160">
+                    <circle class="ring-bg" cx="80" cy="80" r="68"/>
+                    <circle class="ring-progress" id="ring" cx="80" cy="80" r="68" stroke-dasharray="427" stroke-dashoffset="0"/>
+                </svg>
+                <div class="timer-time">
+                    <div class="big" id="timer-display">25:00</div>
+                    <div class="lbl" id="timer-lbl">Работай!</div>
+                </div>
+            </div>
+            <div class="timer-btns-w">
+                <button class="t-action t-start" id="start-btn" onclick="toggleTimer()">▶ Старт</button>
+                <button class="t-action t-reset" onclick="resetTimer()">↺ Сброс</button>
+            </div>
+            <div class="timer-sessions">Сессий завершено: <span id="sessions">0</span></div>
+        </div>
+        <div class="w-footer">
+            <span id="user-lbl">🐾</span>
+            <button class="logout-btn" onclick="doLogout()">Выйти</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API = 'http://localhost:8080';
+    let token = localStorage.getItem('k_token');
+    let me    = localStorage.getItem('k_user');
+    let open  = false;
+
+    // При загрузке — если есть токен (в т.ч. от Google), сразу входим
+    if (token && me) { showMain(); updateTopbar(); loadDashboardTasks(); }
+
+    function updateTopbar() {
+        const loggedIn = !!(token && me);
+        document.getElementById('tbUser').style.display    = loggedIn ? 'flex'  : 'none';
+        document.getElementById('tbLoginBtn').style.display  = loggedIn ? 'none'  : 'block';
+        document.getElementById('tbLogoutBtn').style.display = loggedIn ? 'block' : 'none';
+        if (loggedIn) {
+            document.getElementById('tbName').textContent   = me;
+            document.getElementById('tbAvatar').textContent = me.charAt(0).toUpperCase();
+        }
+    }
+
+    (function startClock() {
+        const DAYS=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+        const MON=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+        function tick() {
+            const n=new Date();
+            document.getElementById('clockTime').textContent=
+                [n.getHours(),n.getMinutes(),n.getSeconds()].map(x=>String(x).padStart(2,'0')).join(':');
+            document.getElementById('clockDate').textContent=
+                `${DAYS[n.getDay()]}, ${n.getDate()} ${MON[n.getMonth()]} ${n.getFullYear()}`;
+            const h=n.getHours();
+            document.getElementById('clockGreeting').textContent=
+                h<6?'Доброй ночи! 🌙':h<12?'Доброе утро! ☀️':h<18?'Добрый день! 🌤':'Добрый вечер! 🌇';
+            document.getElementById('topbarDate').textContent=
+                `${DAYS[n.getDay()]}, ${n.getDate()} ${MON[n.getMonth()]}`;
+        }
+        tick(); setInterval(tick,1000);
+    })();
+
+    async function loadWeather() {
+        const city=document.getElementById('cityInput').value.trim()||'Astana';
+        document.getElementById('wDesc').textContent='Загрузка...';
+        try {
+            const r=await fetch(`https://wttr.in/${encodeURIComponent(city)}?format=j1`);
+            const d=await r.json(), c=d.current_condition[0];
+            document.getElementById('wIcon').textContent=getWeatherIcon(+c.weatherCode,+c.temp_C);
+            document.getElementById('wTemp').textContent=`${c.temp_C}°C`;
+            document.getElementById('wDesc').textContent=c.lang_ru?.[0]?.value||c.weatherDesc[0].value;
+            document.getElementById('wExtra').textContent=`💨 ${c.windspeedKmph} км/ч · 💧 ${c.humidity}% · ощущается ${c.FeelsLikeC}°C`;
+        } catch { document.getElementById('wDesc').textContent='Ошибка загрузки'; }
+    }
+    function getWeatherIcon(code,temp){
+        if(code===113)return temp>20?'☀️':'🌤';
+        if(code<=119)return'🌤';if(code<=143)return'☁️';if(code<=176)return'🌦';
+        if(code<=260)return'🌫';if(code<=296)return'🌧';if(code<=314)return'🌨';
+        if(code<=395)return'❄️';return'🌈';
+    }
+    loadWeather();
+
+    const QUOTES=[
+        {t:'Лучший способ предсказать будущее — создать его.',a:'Питер Друкер'},
+        {t:'Путь в тысячу миль начинается с первого шага.',a:'Лао-Цзы'},
+        {t:'Успех — это сумма небольших усилий, повторяемых день за днём.',a:'Роберт Кольер'},
+        {t:'Не важно, как медленно ты идёшь, главное — не останавливаться.',a:'Конфуций'},
+        {t:'Жизнь — это то, что происходит с тобой, пока ты строишь планы.',a:'Джон Леннон'},
+        {t:'Единственный способ делать великие дела — любить то, что делаешь.',a:'Стив Джобс'},
+        {t:'Верь, что ты можешь, и ты уже на полпути к цели.',a:'Теодор Рузвельт'},
+        {t:'Знание — сила.',a:'Фрэнсис Бэкон'},
+        {t:'Простота — это высшая форма сложности.',a:'Леонардо да Винчи'},
+        {t:'Будущее принадлежит тем, кто верит в красоту своих мечтаний.',a:'Элеонора Рузвельт'},
+    ];
+    let qIdx=Math.floor(Math.random()*QUOTES.length);
+    function showQuote(i){
+        document.getElementById('quoteText').textContent=`"${QUOTES[i].t}"`;
+        document.getElementById('quoteAuthor').textContent=`— ${QUOTES[i].a}`;
+    }
+    function nextQuote(){qIdx=(qIdx+1)%QUOTES.length;showQuote(qIdx);}
+    showQuote(qIdx);
+
+    function onDashNoteInput(){
+        const v=document.getElementById('dashNotesArea').value;
+        localStorage.setItem('dash_note',v);
+        document.getElementById('dashNotesChars').textContent=v.length+' символов';
+        document.getElementById('dashNotesSaved').textContent='💾 сохранено';
+        setTimeout(()=>document.getElementById('dashNotesSaved').textContent='💾 автосохранение',1500);
+    }
+    function clearDashNote(){if(confirm('Очистить заметку?')){document.getElementById('dashNotesArea').value='';localStorage.removeItem('dash_note');document.getElementById('dashNotesChars').textContent='0 символов';}}
+    function downloadDashNote(){const t=document.getElementById('dashNotesArea').value;if(!t)return;const a=document.createElement('a');a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(t);a.download='kitty-note.txt';a.click();}
+    (function(){const s=localStorage.getItem('dash_note')||'';document.getElementById('dashNotesArea').value=s;document.getElementById('dashNotesChars').textContent=s.length+' символов';})();
+
+    let dInt=null,dRun=false,dTotal=25*60,dRemain=25*60,dSess=0;
+    const D_CIRC=314.16;
+    function setDashTimer(m){resetDashTimer();dTotal=dRemain=m*60;updDash();}
+    function setDashTimerCustom(){
+        const m=parseInt(document.getElementById('customMins').value)||0;
+        const s=parseInt(document.getElementById('customSecs').value)||0;
+        const total=m*60+s;
+        if(total<=0)return;
+        resetDashTimer();dTotal=dRemain=total;updDash();
+        document.getElementById('customMins').value='';
+        document.getElementById('customSecs').value='';
+    }
+    function toggleDashTimer(){
+        if(dRun){clearInterval(dInt);dRun=false;document.getElementById('dTBtnStart').textContent='▶ Старт';}
+        else{dRun=true;document.getElementById('dTBtnStart').textContent='⏸ Пауза';
+            dInt=setInterval(()=>{if(dRemain<=0){clearInterval(dInt);dRun=false;dSess++;document.getElementById('dTBtnStart').textContent='▶ Старт';document.getElementById('dTimerLbl').textContent='✅ Готово! ('+dSess+')';return;}dRemain--;updDash();},1000);}
+    }
+    function resetDashTimer(){clearInterval(dInt);dRun=false;dRemain=dTotal;document.getElementById('dTBtnStart').textContent='▶ Старт';document.getElementById('dTimerLbl').textContent='Поехали!';updDash();}
+    function updDash(){
+        const m=String(Math.floor(dRemain/60)).padStart(2,'0'),s=String(dRemain%60).padStart(2,'0');
+        document.getElementById('dTimerDisp').textContent=`${m}:${s}`;
+        document.getElementById('dTrFill').style.strokeDashoffset=D_CIRC*(1-dRemain/dTotal);
+    }
+    updDash();
+
+    function showDashTaskForm(){
+        if(!token){alert('Войдите, чтобы добавить задачу');return;}
+        document.getElementById('dashTaskForm').classList.remove('hidden');
+        document.getElementById('dashTaskInp').focus();
+    }
+    function hideDashTaskForm(){
+        document.getElementById('dashTaskForm').classList.add('hidden');
+        document.getElementById('dashTaskInp').value='';
+    }
+    async function addDashTask(){
+        const title=document.getElementById('dashTaskInp').value.trim();
+        if(!title)return;
+        try{
+            await fetch(`${API}/tasks`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,completed:false})});
+            hideDashTaskForm();loadDashboardTasks();loadTasks();
+        }catch{alert('Ошибка — проверь подключение к серверу');}
+    }
+    async function loadDashboardTasks(){
+        if(!token)return;
+        try{
+            const tasks=await fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json());
+            const total=tasks.length,done=tasks.filter(t=>t.completed).length,left=total-done;
+            document.getElementById('tmTot').textContent=total;
+            document.getElementById('tmDone').textContent=done;
+            document.getElementById('tmOver').textContent=left;
+            if(!tasks.length){
+                document.getElementById('tmList').innerHTML='<div class="tm-placeholder"><span>📋</span><p>Нет задач — нажми +</p></div>';return;
+            }
+            document.getElementById('tmList').innerHTML=tasks.slice(0,6).map(t=>`
+                <div class="tm-item ${t.completed?'done-t':''}">
+                    <div class="tm-circle" onclick="dashQuickComplete(${t.id})">${t.completed?'✓':''}</div>
+                    <span style="flex:1">${esc(t.title)}</span>
+                    <span class="tm-status-badge ${t.completed?'st-done':'st-todo'}">${t.completed?'✅':'📋'}</span>
+                </div>`).join('');
+        }catch{document.getElementById('tmList').innerHTML='<div class="tm-placeholder"><span>🙈</span><p>Сервер недоступен</p></div>';}
+    }
+    async function dashQuickComplete(id){
+        if(!token)return;
+        try{await fetch(`${API}/tasks/${id}/complete`,{method:'PUT',headers:{'Authorization':'Bearer '+token}});loadDashboardTasks();loadTasks();}catch{}
+    }
+
+    function loadHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
+    function saveHabits(h){localStorage.setItem('habits',JSON.stringify(h));}
+    function renderHabits(){
+        const h=loadHabits(),list=document.getElementById('habitsList'),empty=document.getElementById('habitsEmpty');
+        if(!h.length){list.innerHTML='';empty.classList.remove('hidden');return;}
+        empty.classList.add('hidden');
+        list.innerHTML=h.map((x,i)=>`<div class="habit-item ${x.doneToday?'h-done':''}"><div class="h-check" onclick="toggleHabit(${i})">${x.doneToday?'✓':''}</div><span class="h-name">${esc(x.name)}</span><span class="h-streak">${x.streak>0?'🔥'+x.streak:''}</span><button class="h-del" onclick="deleteHabit(${i})">✕</button></div>`).join('');
+    }
+    function toggleHabit(i){const h=loadHabits();h[i].doneToday=!h[i].doneToday;h[i].streak=h[i].doneToday?(h[i].streak||0)+1:Math.max(0,(h[i].streak||1)-1);saveHabits(h);renderHabits();}
+    function deleteHabit(i){const h=loadHabits();h.splice(i,1);saveHabits(h);renderHabits();}
+    function showHabitForm(){document.getElementById('habitForm').style.display='flex';document.getElementById('habitInp').focus();}
+    function hideHabitForm(){document.getElementById('habitForm').style.display='none';document.getElementById('habitInp').value='';}
+    function saveHabit(){const n=document.getElementById('habitInp').value.trim();if(!n)return;const h=loadHabits();h.push({name:n,doneToday:false,streak:0});saveHabits(h);hideHabitForm();renderHabits();}
+    renderHabits();
+
+    function pickMood(v){
+        const today=new Date().toDateString(),hist=JSON.parse(localStorage.getItem('mood_hist')||'{}');
+        hist[today]=v;localStorage.setItem('mood_hist',JSON.stringify(hist));
+        document.querySelectorAll('.me').forEach(b=>b.classList.toggle('picked',+b.dataset.v===v));
+        document.getElementById('moodToday').textContent={1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[v];
+        renderMoodBars();
+    }
+    function renderMoodBars(){
+        const hist=JSON.parse(localStorage.getItem('mood_hist')||'{}');
+        const colors={1:'#ef4444',2:'#f97316',3:'#eab308',4:'#22c55e',5:'#3b82f6'};
+        const today=new Date().toDateString();
+        const todayV=hist[today];
+        if(todayV){document.querySelectorAll('.me').forEach(b=>b.classList.toggle('picked',+b.dataset.v===todayV));document.getElementById('moodToday').textContent={1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[todayV];}
+        const days=[];const n=new Date();
+        for(let i=6;i>=0;i--){const d=new Date(n);d.setDate(d.getDate()-i);days.push(d.toDateString());}
+        document.getElementById('moodBars').innerHTML=days.map(d=>{
+            const v=hist[d],h=v?v*9:4,day=new Date(d).toLocaleDateString('ru',{weekday:'short'}).slice(0,2);
+            return `<div class="mb-col"><div class="mb-bar" style="height:${h}px;background:${v?colors[v]:'#eee'}"></div><div class="mb-day">${day}</div></div>`;
+        }).join('');
+    }
+    renderMoodBars();
+
+    function toggleChat(){
+        open=!open;
+        document.getElementById('chat-widget').classList.toggle('open',open);
+        if(open){document.getElementById('badge').style.display='none';if(token){loadTasks();loadNotes();}}
+    }
+    function switchAuth(t){
+        document.querySelectorAll('.a-tab').forEach((b,i)=>b.classList.toggle('active',(t==='login'&&i===0)||(t==='register'&&i===1)));
+        document.getElementById('login-form').classList.toggle('active',t==='login');
+        document.getElementById('reg-form').classList.toggle('active',t==='register');
+        setAmsg('');
+    }
+    async function doRegister(){
+        const u=v('r-u'),p=v('r-p');if(!u||!p){setAmsg('Заполни все поля');return}
+        try{const r=await fetch(`${API}/auth/register?username=${enc(u)}&password=${enc(p)}`,{method:'POST'});r.ok?(setAmsg('✅ Готово! Теперь войди'),switchAuth('login')):setAmsg('❌ Ошибка регистрации');}
+        catch{setAmsg('❌ Сервер не отвечает')}
+    }
+    async function doLogin(){
+        const u=v('l-u'),p=v('l-p');if(!u||!p){setAmsg('Заполни все поля');return}
+        try{
+            const r=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+            const txt=await r.text();
+            if(r.ok&&txt&&txt!=='INVALID_CREDENTIALS'){
+                token=txt;me=u;
+                localStorage.setItem('k_token',token);
+                localStorage.setItem('k_user',me);
+                showMain();updateTopbar();loadDashboardTasks();
+            } else setAmsg('❌ Неверный логин или пароль');
+        }catch{setAmsg('❌ Сервер не отвечает')}
+    }
+    function showMain(){
+        document.getElementById('auth-section').style.display='none';
+        document.getElementById('main-section').style.display='flex';
+        document.getElementById('user-lbl').textContent='🐾 '+(me||'');
+        if(!document.getElementById('messages').children.length)
+            addBotMsg(`Привет, ${me}! 👋 Я Kitty — твой ИИ-ассистент. Задавай любые вопросы!`);
+        loadTasks();loadNotes();
+    }
+    function doLogout(){
+        token=me=null;
+        localStorage.removeItem('k_token');localStorage.removeItem('k_user');
+        document.getElementById('auth-section').style.display='flex';
+        document.getElementById('main-section').style.display='none';
+        document.getElementById('messages').innerHTML='';
+        document.getElementById('tmList').innerHTML='<div class="tm-placeholder"><span>🔐</span><p>Войди, чтобы увидеть задачи</p></div>';
+        ['tmTot','tmDone','tmOver'].forEach(id=>document.getElementById(id).textContent='—');
+        switchAuth('login');updateTopbar();
+    }
+    function setAmsg(t){document.getElementById('auth-msg').textContent=t}
+    function switchTab(tab){
+        document.querySelectorAll('.t-btn').forEach((b,i)=>b.classList.toggle('active',['chat','tasks','notes','timer'][i]===tab));
+        ['chat','tasks','notes','timer'].forEach(t=>{document.getElementById(t+'-tab').style.display=t===tab?'flex':'none';});
+        if(tab==='tasks')loadTasks();if(tab==='notes')loadNotes();
+    }
+    async function sendMsg(){
+        const inp=document.getElementById('msg-in'),txt=inp.value.trim();if(!txt)return;
+        addUserMsg(txt);inp.value='';const typing=addTyping();
+        try{
+            const r=await fetch(`${API}/chat/send?sender=${enc(me||'guest')}&message=${enc(txt)}`,
+                {method:'POST',headers:token?{'Authorization':'Bearer '+token}:{}});
+            const data=await r.json();typing.remove();addBotMsg(data.response||'...');
+        }catch{typing.remove();addBotMsg('Сервер недоступен.')}
+    }
+    function addUserMsg(txt){msgs().innerHTML+=`<div class="msg user"><div class="msg-av">👤</div><div class="msg-wrap"><div class="bubble">${esc(txt)}</div><div class="msg-time">${ts()}</div></div></div>`;scrollM();}
+    function addBotMsg(txt){msgs().innerHTML+=`<div class="msg bot"><div class="msg-av">🐱</div><div class="msg-wrap"><div class="bubble">${esc(txt)}</div><div class="msg-time">${ts()}</div></div></div>`;scrollM();}
+    function addTyping(){const d=document.createElement('div');d.className='msg bot';d.innerHTML='<div class="msg-av">🐱</div><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';msgs().appendChild(d);scrollM();return d;}
+    function msgs(){return document.getElementById('messages')}
+    function scrollM(){const m=msgs();m.scrollTop=m.scrollHeight}
+
+    async function loadTasks(){
+        if(!token)return;
+        try{
+            const r=await fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}});
+            renderTasks(await r.json());
+        }catch{document.getElementById('tasks-list').innerHTML='<div class="empty"><div class="ei">🙈</div>Сервер недоступен</div>'}
+    }
+    function renderTasks(tasks){
+        const el=document.getElementById('tasks-list');
+        if(!tasks.length){el.innerHTML='<div class="empty"><div class="ei">📋</div>Задач нет — добавь первую!</div>';return}
+        el.innerHTML=tasks.map(t=>`<div class="task-item ${t.completed?'done':''}"><div class="t-check" onclick="completeTask(${t.id})">${t.completed?'✓':''}</div><div class="t-title">${esc(t.title)}</div><button class="t-del" onclick="deleteTask(${t.id})">🗑</button></div>`).join('');
+    }
+    async function addTask(){
+        const inp=document.getElementById('task-in'),title=inp.value.trim();if(!title)return;
+        try{await fetch(`${API}/tasks`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,completed:false})});inp.value='';loadTasks();loadDashboardTasks();}catch{}
+    }
+    async function completeTask(id){try{await fetch(`${API}/tasks/${id}/complete`,{method:'PUT',headers:{'Authorization':'Bearer '+token}});loadTasks();loadDashboardTasks();}catch{}}
+    async function deleteTask(id){try{await fetch(`${API}/tasks/${id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}});loadTasks();loadDashboardTasks();}catch{}}
+
+    // ИСПРАВЛЕНО: теперь GET /notes с токеном, а не /notes/user/{username}
+    async function loadNotes(){
+        if(!token)return;
+        try{
+            const r=await fetch(`${API}/notes`,{headers:{'Authorization':'Bearer '+token}});
+            renderNotes(await r.json());
+        }catch{document.getElementById('notes-list').innerHTML='<div class="empty"><div class="ei">🙈</div>Сервер недоступен</div>'}
+    }
+    function renderNotes(notes){
+        const el=document.getElementById('notes-list');
+        if(!notes.length){el.innerHTML='<div class="empty"><div class="ei">📝</div>Заметок нет — создай первую!</div>';return}
+        el.innerHTML=notes.map(n=>`<div class="note-card"><div class="note-card-title">${esc(n.title||'Без названия')}</div><div class="note-card-body">${esc(n.content||'')}</div><div class="note-card-date">${fmtDate(n.createdAt)}</div><button class="note-del" onclick="deleteNote(${n.id})">✕</button></div>`).join('');
+    }
+    async function addNote(){
+        const title=document.getElementById('note-title').value.trim(),content=document.getElementById('note-body').value.trim();
+        if(!title&&!content)return;
+        try{
+            await fetch(`${API}/notes`,{method:'POST',
+                headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+                body:JSON.stringify({title,content})});
+            document.getElementById('note-title').value='';
+            document.getElementById('note-body').value='';
+            loadNotes();
+        }catch{}
+    }
+    async function deleteNote(id){
+        try{await fetch(`${API}/notes/${id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}});loadNotes();}catch{}
+    }
+    function fmtDate(dt){if(!dt)return'';const d=new Date(dt);return d.toLocaleDateString('ru',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'});}
+
+    let timerInterval=null,timerRunning=false,totalSecs=25*60,remainSecs=25*60,sessions=0;const CIRC=427;
+    function setMode(mode,mins){document.querySelectorAll('.tm-btn').forEach((b,i)=>b.classList.toggle('active',['work','short','long'][i]===mode));const labels={work:'Работай!',short:'Отдыхай!',long:'Большой перерыв'};resetTimer();totalSecs=remainSecs=mins*60;document.getElementById('timer-lbl').textContent=labels[mode];updateDisplay();}
+    function toggleTimer(){if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('start-btn').textContent='▶ Старт';}else{timerRunning=true;document.getElementById('start-btn').textContent='⏸ Пауза';timerInterval=setInterval(()=>{if(remainSecs<=0){clearInterval(timerInterval);timerRunning=false;document.getElementById('start-btn').textContent='▶ Старт';sessions++;document.getElementById('sessions').textContent=sessions;return;}remainSecs--;updateDisplay();},1000);}}
+    function resetTimer(){clearInterval(timerInterval);timerRunning=false;remainSecs=totalSecs;document.getElementById('start-btn').textContent='▶ Старт';updateDisplay();}
+    function updateDisplay(){const m=String(Math.floor(remainSecs/60)).padStart(2,'0'),s=String(remainSecs%60).padStart(2,'0');document.getElementById('timer-display').textContent=`${m}:${s}`;document.getElementById('ring').style.strokeDashoffset=CIRC*(1-remainSecs/totalSecs);}
+    function v(id){return document.getElementById(id).value.trim()}
+    function enc(s){return encodeURIComponent(s)}
+    function esc(s){const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML}
+    function ts(){return new Date().toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'})}
+    setTimeout(()=>{if(!open)document.getElementById('badge').style.display='flex';},2500);
+</script>
+</body>
+</html>

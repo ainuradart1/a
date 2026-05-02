@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head><title>Вход...</title></head>
+<body>
+<p>Выполняется вход...</p>
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    if (token) {
+      localStorage.setItem('jwt_token', token);
+      // Замени /dashboard на адрес своей главной страницы
+      window.location.href = '/';
+    } else {
+      window.location.href = '/login?error=true';
+    }
+</script>
+</body>
+</html>
