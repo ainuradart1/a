@@ -125,4 +125,3 @@ public class ChatService {
         return chatRepository.findBySender(sender);
     }
 }
-//http://localhost:8080/
