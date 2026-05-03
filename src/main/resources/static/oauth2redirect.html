@@ -2,16 +2,18 @@
 <html>
 <head><title>Вход...</title></head>
 <body>
-<p>Выполняется вход...</p>
 <script>
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token');
+    const name  = params.get('name');
+
     if (token) {
-      localStorage.setItem('jwt_token', token);
-      // Замени /dashboard на адрес своей главной страницы
+      // Сохраняем токен и реальное имя из Google
+      localStorage.setItem('k_token', token);
+      localStorage.setItem('k_user', name || 'Пользователь');
       window.location.href = '/';
     } else {
-      window.location.href = '/login?error=true';
+      window.location.href = '/?error=true';
     }
 </script>
 </body>

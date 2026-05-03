@@ -10,8 +10,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 @RequiredArgsConstructor
@@ -28,22 +29,25 @@ public class OAuth2SuccessHandler
             throws IOException {
 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        String email = oAuth2User.getAttribute("email");
+        String email   = oAuth2User.getAttribute("email");
+        String name    = oAuth2User.getAttribute("name");
 
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() ->
-                        new RuntimeException("User not found: " + email));
+                .orElseThrow();
 
-        // Генерируем JWT — передаём username
-        // Если username null (новый Google пользователь) — используем email
         String subject = user.getUsername() != null
                 ? user.getUsername()
                 : user.getEmail();
 
         String token = jwtService.generateToken(subject);
 
+        // Передаём и токен и имя в URL
+        String encodedName = URLEncoder.encode(
+                name != null ? name : subject,
+                StandardCharsets.UTF_8);
+
         getRedirectStrategy().sendRedirect(
                 request, response,
-                "/oauth2/redirect?token=" + token);
+                "/oauth2redirect.html?token=" + token + "&name=" + encodedName);
     }
 }
