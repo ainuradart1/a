@@ -23,12 +23,52 @@
         .tb-logo span{font-size:1.05rem;font-weight:900;color:var(--purple)}
         .tb-center{font-size:.82rem;color:var(--muted);font-weight:700}
         .tb-right{display:flex;align-items:center;gap:10px}
-        .tb-user{display:none;align-items:center;gap:8px}
-        .tb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--pink2));display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:800;color:#fff}
+        .tb-user{display:none;align-items:center;gap:8px;cursor:pointer;padding:4px 8px;border-radius:20px;transition:background .2s}
+        .tb-user:hover{background:var(--p50)}
+        .tb-avatar{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--pink),var(--pink2));display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:800;color:#fff;overflow:hidden;flex-shrink:0}
+        .tb-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%}
         .tb-name{font-size:.82rem;font-weight:700;color:var(--soft)}
         .tb-btn{padding:7px 16px;border-radius:20px;border:none;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;background:linear-gradient(135deg,var(--pink),var(--pink2));color:#444;transition:opacity .2s}
         .tb-btn:hover{opacity:.85}
         .tb-btn.outline{background:none;border:2px solid var(--pink);color:var(--p400);display:none}
+
+        /* ══ МОДАЛКА ПРОФИЛЯ ══ */
+        .profile-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:500;display:none;align-items:center;justify-content:center;animation:fadeIn .2s}
+        .profile-overlay.open{display:flex}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .profile-modal{background:#fff;border-radius:24px;width:420px;max-width:95vw;box-shadow:0 24px 64px rgba(0,0,0,.18);animation:slideUp .25s cubic-bezier(.22,.68,0,1.2);overflow:hidden}
+        @keyframes slideUp{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:none}}
+        .pm-header{background:linear-gradient(135deg,var(--pink),var(--pink2));padding:28px 24px 20px;position:relative;text-align:center}
+        .pm-close{position:absolute;top:14px;right:14px;background:rgba(255,255,255,.5);border:none;border-radius:50%;width:30px;height:30px;cursor:pointer;font-size:.9rem;display:flex;align-items:center;justify-content:center;transition:background .2s}
+        .pm-close:hover{background:rgba(255,255,255,.8)}
+        .pm-avatar-wrap{position:relative;display:inline-block;margin-bottom:10px}
+        .pm-avatar{width:80px;height:80px;border-radius:50%;border:3px solid #fff;box-shadow:var(--sh2);object-fit:cover;background:linear-gradient(135deg,var(--purple2),var(--purple));display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:800;color:#fff;overflow:hidden}
+        .pm-avatar img{width:100%;height:100%;object-fit:cover}
+        .pm-avatar-edit{position:absolute;bottom:2px;right:2px;width:24px;height:24px;background:white;border-radius:50%;border:none;cursor:pointer;font-size:.75rem;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh1);transition:transform .2s}
+        .pm-avatar-edit:hover{transform:scale(1.15)}
+        .pm-hname{font-size:1.1rem;font-weight:800;color:#444;margin-bottom:2px}
+        .pm-hemail{font-size:.78rem;color:#888;font-weight:600}
+        .pm-provider{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:3px 10px;background:rgba(255,255,255,.6);border-radius:20px;font-size:.7rem;font-weight:700;color:#666}
+        .pm-body{padding:20px 24px 24px;display:flex;flex-direction:column;gap:14px}
+        .pm-field{display:flex;flex-direction:column;gap:5px}
+        .pm-label{font-size:.75rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+        .pm-input{padding:10px 14px;border:2px solid var(--border);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.88rem;outline:none;transition:border-color .2s;background:var(--p50);color:var(--txt)}
+        .pm-input:focus{border-color:var(--p400)}
+        .pm-textarea{resize:none;height:80px;line-height:1.5}
+        .pm-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+        .pm-stat{background:var(--p50);border-radius:12px;padding:10px;text-align:center}
+        .pm-stat b{display:block;font-size:1.2rem;font-weight:900;color:var(--p400)}
+        .pm-stat span{font-size:.68rem;color:var(--muted);font-weight:700}
+        .pm-actions{display:flex;gap:10px;margin-top:4px}
+        .pm-save{flex:1;padding:11px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--pink),var(--pink2));color:#444;font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;cursor:pointer;transition:opacity .2s}
+        .pm-save:hover{opacity:.85}
+        .pm-logout{padding:11px 16px;border:2px solid var(--border);border-radius:14px;background:none;color:var(--soft);font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:700;cursor:pointer;transition:all .2s}
+        .pm-logout:hover{border-color:#ef4444;color:#ef4444}
+        .pm-msg{font-size:.76rem;text-align:center;min-height:14px;font-weight:700}
+        .pm-msg.ok{color:#22c55e}
+        .pm-msg.err{color:#ef4444}
+        .pm-url-hint{font-size:.7rem;color:var(--muted);margin-top:2px}
+
         .dashboard{padding:24px 28px 120px;max-width:1280px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
         .dash-row{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
         .dash-card{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:22px;box-shadow:var(--sh1);display:flex;flex-direction:column;gap:12px;transition:border-color .2s,box-shadow .2s}
@@ -81,7 +121,6 @@
         .tbtn:hover{opacity:.85;transform:translateY(-1px)}
         .tp-btn{padding:4px 10px;border:2px solid var(--border);border-radius:10px;background:none;cursor:pointer;font-size:.72rem;font-weight:700;color:var(--muted);font-family:'Nunito',sans-serif;transition:all .2s}
         .tp-btn:hover{border-color:var(--pink);color:var(--p400)}
-        .timer-info{font-size:.72rem;color:var(--muted);text-align:center}
         .timer-custom-row{display:flex;gap:6px;align-items:center}
         .tasks-mini-stats{display:flex;gap:8px}
         .tms-item{flex:1;background:var(--p50);border-radius:12px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:2px}
@@ -136,7 +175,6 @@
         .badge{position:absolute;top:-4px;right:-4px;width:22px;height:22px;background:#ff4757;border-radius:50%;border:2px solid white;font-size:.63rem;display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
         #chat-widget{position:fixed;bottom:120px;right:32px;width:380px;height:590px;background:#fff;border-radius:24px;box-shadow:0 24px 64px rgba(0,0,0,.18);display:none;flex-direction:column;overflow:hidden;z-index:999}
         #chat-widget.open{display:flex;animation:slideUp .28s cubic-bezier(.22,.68,0,1.2)}
-        @keyframes slideUp{from{opacity:0;transform:translateY(24px) scale(.96)}to{opacity:1;transform:none}}
         @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
         .w-header{background:linear-gradient(135deg,#ff9a9e,#fecfef);padding:13px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
         .w-hl{display:flex;align-items:center;gap:10px}
@@ -158,7 +196,6 @@
         .f-in:focus{border-color:#ff9a9e}
         .f-btn{padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#ff9a9e,#fecfef);font-size:.9rem;font-weight:700;color:#444;cursor:pointer;transition:opacity .2s,transform .2s;font-family:'Nunito',sans-serif}
         .f-btn:hover{opacity:.9;transform:translateY(-1px)}
-        /* Google кнопка */
         .google-btn{padding:11px;border:2px solid #e0e0e0;border-radius:12px;background:white;font-size:.87rem;font-weight:700;color:#444;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;font-family:'Nunito',sans-serif;text-decoration:none}
         .google-btn:hover{border-color:#ff9a9e;background:#fff5f8}
         .divider{display:flex;align-items:center;gap:10px;color:#ccc;font-size:.75rem;margin:4px 0}
@@ -261,11 +298,55 @@
 <div class="paw" style="bottom:12%;left:22%;font-size:2.5rem">🐾</div>
 <div class="paw" style="top:45%;right:6%;font-size:2rem">🐾</div>
 
+<!-- ══ МОДАЛКА ПРОФИЛЯ ══ -->
+<div class="profile-overlay" id="profileOverlay" onclick="closeProfileIfOutside(event)">
+    <div class="profile-modal" id="profileModal">
+        <div class="pm-header">
+            <button class="pm-close" onclick="closeProfile()">✕</button>
+            <div class="pm-avatar-wrap">
+                <div class="pm-avatar" id="pmAvatar">А</div>
+                <button class="pm-avatar-edit" onclick="document.getElementById('pmPicInput').focus()" title="Изменить фото">✏️</button>
+            </div>
+            <div class="pm-hname" id="pmHeaderName">Пользователь</div>
+            <div class="pm-hemail" id="pmHeaderEmail">email@example.com</div>
+            <div class="pm-provider" id="pmProvider">🔐 Локальный вход</div>
+        </div>
+        <div class="pm-body">
+            <!-- Статистика -->
+            <div class="pm-stats">
+                <div class="pm-stat"><b id="pmStatTasks">0</b><span>Задач</span></div>
+                <div class="pm-stat"><b id="pmStatNotes">0</b><span>Заметок</span></div>
+                <div class="pm-stat"><b id="pmStatHabits">0</b><span>Привычек</span></div>
+            </div>
+            <!-- Поля редактирования -->
+            <div class="pm-field">
+                <div class="pm-label">Имя</div>
+                <input class="pm-input" id="pmNameInput" type="text" placeholder="Твоё имя...">
+            </div>
+            <div class="pm-field">
+                <div class="pm-label">О себе</div>
+                <textarea class="pm-input pm-textarea" id="pmBioInput" placeholder="Расскажи немного о себе..."></textarea>
+            </div>
+            <div class="pm-field">
+                <div class="pm-label">Ссылка на фото (URL)</div>
+                <input class="pm-input" id="pmPicInput" type="url" placeholder="https://...">
+                <div class="pm-url-hint">Вставь прямую ссылку на изображение</div>
+            </div>
+            <div class="pm-msg" id="pmMsg"></div>
+            <div class="pm-actions">
+                <button class="pm-save" onclick="saveProfile()">💾 Сохранить</button>
+                <button class="pm-logout" onclick="doLogout()">Выйти</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <header class="topbar">
     <div class="tb-logo"><span class="logo-icon">🐱</span><span>Kitty Assistant</span></div>
     <div class="tb-center" id="topbarDate"></div>
     <div class="tb-right">
-        <div class="tb-user" id="tbUser">
+        <!-- Кликабельный профиль -->
+        <div class="tb-user" id="tbUser" onclick="openProfile()" title="Открыть профиль">
             <div class="tb-avatar" id="tbAvatar">К</div>
             <span class="tb-name" id="tbName">Пользователь</span>
         </div>
@@ -306,7 +387,6 @@
             <button class="qc-btn" onclick="nextQuote()">Следующая →</button>
         </div>
     </div>
-
     <div class="dash-row">
         <div class="dash-card">
             <div class="card-head">
@@ -375,7 +455,6 @@
             </div>
         </div>
     </div>
-
     <div class="dash-row">
         <div class="dash-card">
             <div class="card-head">
@@ -399,11 +478,11 @@
             </div>
             <p class="mood-q">Как ты себя чувствуешь?</p>
             <div class="mood-emojis">
-                <button class="me" data-v="5" onclick="pickMood(5)" title="Отлично!">😄</button>
-                <button class="me" data-v="4" onclick="pickMood(4)" title="Хорошо">🙂</button>
-                <button class="me" data-v="3" onclick="pickMood(3)" title="Нормально">😐</button>
-                <button class="me" data-v="2" onclick="pickMood(2)" title="Грустно">😔</button>
-                <button class="me" data-v="1" onclick="pickMood(1)" title="Плохо">😞</button>
+                <button class="me" data-v="5" onclick="pickMood(5)">😄</button>
+                <button class="me" data-v="4" onclick="pickMood(4)">🙂</button>
+                <button class="me" data-v="3" onclick="pickMood(3)">😐</button>
+                <button class="me" data-v="2" onclick="pickMood(2)">😔</button>
+                <button class="me" data-v="1" onclick="pickMood(1)">😞</button>
             </div>
             <div class="mood-history-label">Последние 7 дней:</div>
             <div class="mood-bars" id="moodBars"></div>
@@ -444,8 +523,6 @@
     <div id="auth-section">
         <div class="auth-title">Привет! 🐱</div>
         <div class="auth-sub">Войди чтобы начать</div>
-
-        <!-- КНОПКА GOOGLE -->
         <a class="google-btn" href="/oauth2/authorization/google">
             <svg width="18" height="18" viewBox="0 0 48 48">
                 <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -455,9 +532,7 @@
             </svg>
             Войти через Google
         </a>
-
         <div class="divider">или</div>
-
         <div class="auth-tabs">
             <button class="a-tab active" onclick="switchAuth('login')">Войти</button>
             <button class="a-tab" onclick="switchAuth('register')">Регистрация</button>
@@ -535,26 +610,137 @@
 
 <script>
     const API = window.location.hostname === 'localhost'
-    ? 'http://localhost:8080'
-    : 'https://a-production-908c.up.railway.app';
+        ? 'http://localhost:8080'
+        : 'https://a-production-908c.up.railway.app';
+
     let token = localStorage.getItem('k_token');
     let me    = localStorage.getItem('k_user');
     let open  = false;
 
-    // При загрузке — если есть токен (в т.ч. от Google), сразу входим
     if (token && me) { showMain(); updateTopbar(); loadDashboardTasks(); }
 
-    function updateTopbar() {
-        const loggedIn = !!(token && me);
-        document.getElementById('tbUser').style.display    = loggedIn ? 'flex'  : 'none';
-        document.getElementById('tbLoginBtn').style.display  = loggedIn ? 'none'  : 'block';
-        document.getElementById('tbLogoutBtn').style.display = loggedIn ? 'block' : 'none';
-        if (loggedIn) {
-            document.getElementById('tbName').textContent   = me;
-            document.getElementById('tbAvatar').textContent = me.charAt(0).toUpperCase();
+    /* ══ ПРОФИЛЬ ══ */
+    async function openProfile() {
+        if (!token) return;
+        document.getElementById('profileOverlay').classList.add('open');
+        document.body.style.overflow = 'hidden';
+
+        // Заполняем статистику из localStorage
+        const habits = JSON.parse(localStorage.getItem('habits') || '[]');
+        document.getElementById('pmStatHabits').textContent = habits.length;
+
+        try {
+            const [profile, tasks, notes] = await Promise.all([
+                fetch(`${API}/api/profile`, {headers: {'Authorization': 'Bearer ' + token}}).then(r => r.json()),
+                fetch(`${API}/tasks`,        {headers: {'Authorization': 'Bearer ' + token}}).then(r => r.json()),
+                fetch(`${API}/notes`,        {headers: {'Authorization': 'Bearer ' + token}}).then(r => r.json()),
+            ]);
+
+            // Заголовок
+            document.getElementById('pmHeaderName').textContent  = profile.username || me;
+            document.getElementById('pmHeaderEmail').textContent = profile.email || '';
+            document.getElementById('pmProvider').textContent    =
+                profile.provider === 'GOOGLE' ? '🌐 Вход через Google' : '🔐 Локальный вход';
+
+            // Аватар в модалке
+            const pmAv = document.getElementById('pmAvatar');
+            if (profile.picture) {
+                pmAv.innerHTML = `<img src="${esc(profile.picture)}" alt="avatar">`;
+            } else {
+                pmAv.textContent = (profile.username || me || 'А').charAt(0).toUpperCase();
+            }
+
+            // Поля
+            document.getElementById('pmNameInput').value = profile.username || '';
+            document.getElementById('pmBioInput').value  = profile.bio || '';
+            document.getElementById('pmPicInput').value  = profile.picture || '';
+
+            // Статистика
+            document.getElementById('pmStatTasks').textContent = tasks.length || 0;
+            document.getElementById('pmStatNotes').textContent = notes.length || 0;
+
+        } catch(e) {
+            document.getElementById('pmMsg').textContent = 'Ошибка загрузки профиля';
+            document.getElementById('pmMsg').className = 'pm-msg err';
         }
     }
 
+    function closeProfile() {
+        document.getElementById('profileOverlay').classList.remove('open');
+        document.body.style.overflow = '';
+        document.getElementById('pmMsg').textContent = '';
+    }
+
+    function closeProfileIfOutside(e) {
+        if (e.target === document.getElementById('profileOverlay')) closeProfile();
+    }
+
+    async function saveProfile() {
+        const username = document.getElementById('pmNameInput').value.trim();
+        const bio      = document.getElementById('pmBioInput').value.trim();
+        const picture  = document.getElementById('pmPicInput').value.trim();
+
+        try {
+            const r = await fetch(`${API}/api/profile`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
+                body: JSON.stringify({username, bio, picture})
+            });
+
+            if (!r.ok) throw new Error();
+            const data = await r.json();
+
+            // Обновляем имя в localStorage и на странице
+            if (data.username) {
+                me = data.username;
+                localStorage.setItem('k_user', me);
+            }
+
+            // Обновляем топбар
+            updateTopbar();
+
+            // Обновляем аватар в топбаре если сменили фото
+            if (data.picture) {
+                const av = document.getElementById('tbAvatar');
+                av.innerHTML = `<img src="${esc(data.picture)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+            }
+
+            // Обновляем заголовок в модалке
+            document.getElementById('pmHeaderName').textContent = data.username || me;
+            const pmAv = document.getElementById('pmAvatar');
+            if (data.picture) {
+                pmAv.innerHTML = `<img src="${esc(data.picture)}" alt="avatar">`;
+            }
+
+            document.getElementById('pmMsg').textContent = '✅ Профиль сохранён!';
+            document.getElementById('pmMsg').className = 'pm-msg ok';
+            setTimeout(() => document.getElementById('pmMsg').textContent = '', 2500);
+
+        } catch {
+            document.getElementById('pmMsg').textContent = '❌ Ошибка сохранения';
+            document.getElementById('pmMsg').className = 'pm-msg err';
+        }
+    }
+
+    /* ══ ТОПБАР ══ */
+    function updateTopbar() {
+        const loggedIn = !!(token && me);
+        document.getElementById('tbUser').style.display     = loggedIn ? 'flex'  : 'none';
+        document.getElementById('tbLoginBtn').style.display  = loggedIn ? 'none'  : 'block';
+        document.getElementById('tbLogoutBtn').style.display = loggedIn ? 'block' : 'none';
+        if (loggedIn) {
+            document.getElementById('tbName').textContent = me;
+            const av = document.getElementById('tbAvatar');
+            const pic = localStorage.getItem('k_picture');
+            if (pic) {
+                av.innerHTML = `<img src="${esc(pic)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+            } else {
+                av.textContent = me.charAt(0).toUpperCase();
+            }
+        }
+    }
+
+    /* ══ ЧАСЫ ══ */
     (function startClock() {
         const DAYS=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
         const MON=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
@@ -573,6 +759,7 @@
         tick(); setInterval(tick,1000);
     })();
 
+    /* ══ ПОГОДА ══ */
     async function loadWeather() {
         const city=document.getElementById('cityInput').value.trim()||'Astana';
         document.getElementById('wDesc').textContent='Загрузка...';
@@ -593,6 +780,7 @@
     }
     loadWeather();
 
+    /* ══ ЦИТАТЫ ══ */
     const QUOTES=[
         {t:'Лучший способ предсказать будущее — создать его.',a:'Питер Друкер'},
         {t:'Путь в тысячу миль начинается с первого шага.',a:'Лао-Цзы'},
@@ -606,98 +794,37 @@
         {t:'Будущее принадлежит тем, кто верит в красоту своих мечтаний.',a:'Элеонора Рузвельт'},
     ];
     let qIdx=Math.floor(Math.random()*QUOTES.length);
-    function showQuote(i){
-        document.getElementById('quoteText').textContent=`"${QUOTES[i].t}"`;
-        document.getElementById('quoteAuthor').textContent=`— ${QUOTES[i].a}`;
-    }
+    function showQuote(i){document.getElementById('quoteText').textContent=`"${QUOTES[i].t}"`;document.getElementById('quoteAuthor').textContent=`— ${QUOTES[i].a}`;}
     function nextQuote(){qIdx=(qIdx+1)%QUOTES.length;showQuote(qIdx);}
     showQuote(qIdx);
 
-    function onDashNoteInput(){
-        const v=document.getElementById('dashNotesArea').value;
-        localStorage.setItem('dash_note',v);
-        document.getElementById('dashNotesChars').textContent=v.length+' символов';
-        document.getElementById('dashNotesSaved').textContent='💾 сохранено';
-        setTimeout(()=>document.getElementById('dashNotesSaved').textContent='💾 автосохранение',1500);
-    }
+    /* ══ ЗАМЕТКИ ДАШБОРДА ══ */
+    function onDashNoteInput(){const v=document.getElementById('dashNotesArea').value;localStorage.setItem('dash_note',v);document.getElementById('dashNotesChars').textContent=v.length+' символов';document.getElementById('dashNotesSaved').textContent='💾 сохранено';setTimeout(()=>document.getElementById('dashNotesSaved').textContent='💾 автосохранение',1500);}
     function clearDashNote(){if(confirm('Очистить заметку?')){document.getElementById('dashNotesArea').value='';localStorage.removeItem('dash_note');document.getElementById('dashNotesChars').textContent='0 символов';}}
     function downloadDashNote(){const t=document.getElementById('dashNotesArea').value;if(!t)return;const a=document.createElement('a');a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(t);a.download='kitty-note.txt';a.click();}
     (function(){const s=localStorage.getItem('dash_note')||'';document.getElementById('dashNotesArea').value=s;document.getElementById('dashNotesChars').textContent=s.length+' символов';})();
 
+    /* ══ ТАЙМЕР ДАШБОРДА ══ */
     let dInt=null,dRun=false,dTotal=25*60,dRemain=25*60,dSess=0;
     const D_CIRC=314.16;
     function setDashTimer(m){resetDashTimer();dTotal=dRemain=m*60;updDash();}
-    function setDashTimerCustom(){
-        const m=parseInt(document.getElementById('customMins').value)||0;
-        const s=parseInt(document.getElementById('customSecs').value)||0;
-        const total=m*60+s;
-        if(total<=0)return;
-        resetDashTimer();dTotal=dRemain=total;updDash();
-        document.getElementById('customMins').value='';
-        document.getElementById('customSecs').value='';
-    }
-    function toggleDashTimer(){
-        if(dRun){clearInterval(dInt);dRun=false;document.getElementById('dTBtnStart').textContent='▶ Старт';}
-        else{dRun=true;document.getElementById('dTBtnStart').textContent='⏸ Пауза';
-            dInt=setInterval(()=>{if(dRemain<=0){clearInterval(dInt);dRun=false;dSess++;document.getElementById('dTBtnStart').textContent='▶ Старт';document.getElementById('dTimerLbl').textContent='✅ Готово! ('+dSess+')';return;}dRemain--;updDash();},1000);}
-    }
+    function setDashTimerCustom(){const m=parseInt(document.getElementById('customMins').value)||0,s=parseInt(document.getElementById('customSecs').value)||0,total=m*60+s;if(total<=0)return;resetDashTimer();dTotal=dRemain=total;updDash();document.getElementById('customMins').value='';document.getElementById('customSecs').value='';}
+    function toggleDashTimer(){if(dRun){clearInterval(dInt);dRun=false;document.getElementById('dTBtnStart').textContent='▶ Старт';}else{dRun=true;document.getElementById('dTBtnStart').textContent='⏸ Пауза';dInt=setInterval(()=>{if(dRemain<=0){clearInterval(dInt);dRun=false;dSess++;document.getElementById('dTBtnStart').textContent='▶ Старт';document.getElementById('dTimerLbl').textContent='✅ Готово! ('+dSess+')';return;}dRemain--;updDash();},1000);}}
     function resetDashTimer(){clearInterval(dInt);dRun=false;dRemain=dTotal;document.getElementById('dTBtnStart').textContent='▶ Старт';document.getElementById('dTimerLbl').textContent='Поехали!';updDash();}
-    function updDash(){
-        const m=String(Math.floor(dRemain/60)).padStart(2,'0'),s=String(dRemain%60).padStart(2,'0');
-        document.getElementById('dTimerDisp').textContent=`${m}:${s}`;
-        document.getElementById('dTrFill').style.strokeDashoffset=D_CIRC*(1-dRemain/dTotal);
-    }
+    function updDash(){const m=String(Math.floor(dRemain/60)).padStart(2,'0'),s=String(dRemain%60).padStart(2,'0');document.getElementById('dTimerDisp').textContent=`${m}:${s}`;document.getElementById('dTrFill').style.strokeDashoffset=D_CIRC*(1-dRemain/dTotal);}
     updDash();
 
-    function showDashTaskForm(){
-        if(!token){alert('Войдите, чтобы добавить задачу');return;}
-        document.getElementById('dashTaskForm').classList.remove('hidden');
-        document.getElementById('dashTaskInp').focus();
-    }
-    function hideDashTaskForm(){
-        document.getElementById('dashTaskForm').classList.add('hidden');
-        document.getElementById('dashTaskInp').value='';
-    }
-    async function addDashTask(){
-        const title=document.getElementById('dashTaskInp').value.trim();
-        if(!title)return;
-        try{
-            await fetch(`${API}/tasks`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,completed:false})});
-            hideDashTaskForm();loadDashboardTasks();loadTasks();
-        }catch{alert('Ошибка — проверь подключение к серверу');}
-    }
-    async function loadDashboardTasks(){
-        if(!token)return;
-        try{
-            const tasks=await fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json());
-            const total=tasks.length,done=tasks.filter(t=>t.completed).length,left=total-done;
-            document.getElementById('tmTot').textContent=total;
-            document.getElementById('tmDone').textContent=done;
-            document.getElementById('tmOver').textContent=left;
-            if(!tasks.length){
-                document.getElementById('tmList').innerHTML='<div class="tm-placeholder"><span>📋</span><p>Нет задач — нажми +</p></div>';return;
-            }
-            document.getElementById('tmList').innerHTML=tasks.slice(0,6).map(t=>`
-                <div class="tm-item ${t.completed?'done-t':''}">
-                    <div class="tm-circle" onclick="dashQuickComplete(${t.id})">${t.completed?'✓':''}</div>
-                    <span style="flex:1">${esc(t.title)}</span>
-                    <span class="tm-status-badge ${t.completed?'st-done':'st-todo'}">${t.completed?'✅':'📋'}</span>
-                </div>`).join('');
-        }catch{document.getElementById('tmList').innerHTML='<div class="tm-placeholder"><span>🙈</span><p>Сервер недоступен</p></div>';}
-    }
-    async function dashQuickComplete(id){
-        if(!token)return;
-        try{await fetch(`${API}/tasks/${id}/complete`,{method:'PUT',headers:{'Authorization':'Bearer '+token}});loadDashboardTasks();loadTasks();}catch{}
-    }
+    /* ══ МИНИ-ЗАДАЧИ ДАШБОРДА ══ */
+    function showDashTaskForm(){if(!token){alert('Войдите, чтобы добавить задачу');return;}document.getElementById('dashTaskForm').classList.remove('hidden');document.getElementById('dashTaskInp').focus();}
+    function hideDashTaskForm(){document.getElementById('dashTaskForm').classList.add('hidden');document.getElementById('dashTaskInp').value='';}
+    async function addDashTask(){const title=document.getElementById('dashTaskInp').value.trim();if(!title)return;try{await fetch(`${API}/tasks`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,completed:false})});hideDashTaskForm();loadDashboardTasks();loadTasks();}catch{alert('Ошибка');}}
+    async function loadDashboardTasks(){if(!token)return;try{const tasks=await fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json());const total=tasks.length,done=tasks.filter(t=>t.completed).length,left=total-done;document.getElementById('tmTot').textContent=total;document.getElementById('tmDone').textContent=done;document.getElementById('tmOver').textContent=left;if(!tasks.length){document.getElementById('tmList').innerHTML='<div class="tm-placeholder"><span>📋</span><p>Нет задач — нажми +</p></div>';return;}document.getElementById('tmList').innerHTML=tasks.slice(0,6).map(t=>`<div class="tm-item ${t.completed?'done-t':''}"><div class="tm-circle" onclick="dashQuickComplete(${t.id})">${t.completed?'✓':''}</div><span style="flex:1">${esc(t.title)}</span><span class="tm-status-badge ${t.completed?'st-done':'st-todo'}">${t.completed?'✅':'📋'}</span></div>`).join('');}catch{document.getElementById('tmList').innerHTML='<div class="tm-placeholder"><span>🙈</span><p>Сервер недоступен</p></div>';}}
+    async function dashQuickComplete(id){if(!token)return;try{await fetch(`${API}/tasks/${id}/complete`,{method:'PUT',headers:{'Authorization':'Bearer '+token}});loadDashboardTasks();loadTasks();}catch{}}
 
+    /* ══ ПРИВЫЧКИ ══ */
     function loadHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
     function saveHabits(h){localStorage.setItem('habits',JSON.stringify(h));}
-    function renderHabits(){
-        const h=loadHabits(),list=document.getElementById('habitsList'),empty=document.getElementById('habitsEmpty');
-        if(!h.length){list.innerHTML='';empty.classList.remove('hidden');return;}
-        empty.classList.add('hidden');
-        list.innerHTML=h.map((x,i)=>`<div class="habit-item ${x.doneToday?'h-done':''}"><div class="h-check" onclick="toggleHabit(${i})">${x.doneToday?'✓':''}</div><span class="h-name">${esc(x.name)}</span><span class="h-streak">${x.streak>0?'🔥'+x.streak:''}</span><button class="h-del" onclick="deleteHabit(${i})">✕</button></div>`).join('');
-    }
+    function renderHabits(){const h=loadHabits(),list=document.getElementById('habitsList'),empty=document.getElementById('habitsEmpty');if(!h.length){list.innerHTML='';empty.classList.remove('hidden');return;}empty.classList.add('hidden');list.innerHTML=h.map((x,i)=>`<div class="habit-item ${x.doneToday?'h-done':''}"><div class="h-check" onclick="toggleHabit(${i})">${x.doneToday?'✓':''}</div><span class="h-name">${esc(x.name)}</span><span class="h-streak">${x.streak>0?'🔥'+x.streak:''}</span><button class="h-del" onclick="deleteHabit(${i})">✕</button></div>`).join('');}
     function toggleHabit(i){const h=loadHabits();h[i].doneToday=!h[i].doneToday;h[i].streak=h[i].doneToday?(h[i].streak||0)+1:Math.max(0,(h[i].streak||1)-1);saveHabits(h);renderHabits();}
     function deleteHabit(i){const h=loadHabits();h.splice(i,1);saveHabits(h);renderHabits();}
     function showHabitForm(){document.getElementById('habitForm').style.display='flex';document.getElementById('habitInp').focus();}
@@ -705,145 +832,36 @@
     function saveHabit(){const n=document.getElementById('habitInp').value.trim();if(!n)return;const h=loadHabits();h.push({name:n,doneToday:false,streak:0});saveHabits(h);hideHabitForm();renderHabits();}
     renderHabits();
 
-    function pickMood(v){
-        const today=new Date().toDateString(),hist=JSON.parse(localStorage.getItem('mood_hist')||'{}');
-        hist[today]=v;localStorage.setItem('mood_hist',JSON.stringify(hist));
-        document.querySelectorAll('.me').forEach(b=>b.classList.toggle('picked',+b.dataset.v===v));
-        document.getElementById('moodToday').textContent={1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[v];
-        renderMoodBars();
-    }
-    function renderMoodBars(){
-        const hist=JSON.parse(localStorage.getItem('mood_hist')||'{}');
-        const colors={1:'#ef4444',2:'#f97316',3:'#eab308',4:'#22c55e',5:'#3b82f6'};
-        const today=new Date().toDateString();
-        const todayV=hist[today];
-        if(todayV){document.querySelectorAll('.me').forEach(b=>b.classList.toggle('picked',+b.dataset.v===todayV));document.getElementById('moodToday').textContent={1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[todayV];}
-        const days=[];const n=new Date();
-        for(let i=6;i>=0;i--){const d=new Date(n);d.setDate(d.getDate()-i);days.push(d.toDateString());}
-        document.getElementById('moodBars').innerHTML=days.map(d=>{
-            const v=hist[d],h=v?v*9:4,day=new Date(d).toLocaleDateString('ru',{weekday:'short'}).slice(0,2);
-            return `<div class="mb-col"><div class="mb-bar" style="height:${h}px;background:${v?colors[v]:'#eee'}"></div><div class="mb-day">${day}</div></div>`;
-        }).join('');
-    }
+    /* ══ НАСТРОЕНИЕ ══ */
+    function pickMood(v){const today=new Date().toDateString(),hist=JSON.parse(localStorage.getItem('mood_hist')||'{}');hist[today]=v;localStorage.setItem('mood_hist',JSON.stringify(hist));document.querySelectorAll('.me').forEach(b=>b.classList.toggle('picked',+b.dataset.v===v));document.getElementById('moodToday').textContent={1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[v];renderMoodBars();}
+    function renderMoodBars(){const hist=JSON.parse(localStorage.getItem('mood_hist')||'{}');const colors={1:'#ef4444',2:'#f97316',3:'#eab308',4:'#22c55e',5:'#3b82f6'};const today=new Date().toDateString();const todayV=hist[today];if(todayV){document.querySelectorAll('.me').forEach(b=>b.classList.toggle('picked',+b.dataset.v===todayV));document.getElementById('moodToday').textContent={1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[todayV];}const days=[];const n=new Date();for(let i=6;i>=0;i--){const d=new Date(n);d.setDate(d.getDate()-i);days.push(d.toDateString());}document.getElementById('moodBars').innerHTML=days.map(d=>{const v=hist[d],h=v?v*9:4,day=new Date(d).toLocaleDateString('ru',{weekday:'short'}).slice(0,2);return `<div class="mb-col"><div class="mb-bar" style="height:${h}px;background:${v?colors[v]:'#eee'}"></div><div class="mb-day">${day}</div></div>`;}).join('');}
     renderMoodBars();
 
-    function toggleChat(){
-        open=!open;
-        document.getElementById('chat-widget').classList.toggle('open',open);
-        if(open){document.getElementById('badge').style.display='none';if(token){loadTasks();loadNotes();}}
-    }
-    function switchAuth(t){
-        document.querySelectorAll('.a-tab').forEach((b,i)=>b.classList.toggle('active',(t==='login'&&i===0)||(t==='register'&&i===1)));
-        document.getElementById('login-form').classList.toggle('active',t==='login');
-        document.getElementById('reg-form').classList.toggle('active',t==='register');
-        setAmsg('');
-    }
-    async function doRegister(){
-        const u=v('r-u'),p=v('r-p');if(!u||!p){setAmsg('Заполни все поля');return}
-        try{const r=await fetch(`${API}/auth/register?username=${enc(u)}&password=${enc(p)}`,{method:'POST'});r.ok?(setAmsg('✅ Готово! Теперь войди'),switchAuth('login')):setAmsg('❌ Ошибка регистрации');}
-        catch{setAmsg('❌ Сервер не отвечает')}
-    }
-    async function doLogin(){
-        const u=v('l-u'),p=v('l-p');if(!u||!p){setAmsg('Заполни все поля');return}
-        try{
-            const r=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
-            const txt=await r.text();
-            if(r.ok&&txt&&txt!=='INVALID_CREDENTIALS'){
-                token=txt;me=u;
-                localStorage.setItem('k_token',token);
-                localStorage.setItem('k_user',me);
-                showMain();updateTopbar();loadDashboardTasks();
-            } else setAmsg('❌ Неверный логин или пароль');
-        }catch{setAmsg('❌ Сервер не отвечает')}
-    }
-    function showMain(){
-        document.getElementById('auth-section').style.display='none';
-        document.getElementById('main-section').style.display='flex';
-        document.getElementById('user-lbl').textContent='🐾 '+(me||'');
-        if(!document.getElementById('messages').children.length)
-            addBotMsg(`Привет, ${me}! 👋 Я Kitty — твой ИИ-ассистент. Задавай любые вопросы!`);
-        loadTasks();loadNotes();
-    }
-    function doLogout(){
-        token=me=null;
-        localStorage.removeItem('k_token');localStorage.removeItem('k_user');
-        document.getElementById('auth-section').style.display='flex';
-        document.getElementById('main-section').style.display='none';
-        document.getElementById('messages').innerHTML='';
-        document.getElementById('tmList').innerHTML='<div class="tm-placeholder"><span>🔐</span><p>Войди, чтобы увидеть задачи</p></div>';
-        ['tmTot','tmDone','tmOver'].forEach(id=>document.getElementById(id).textContent='—');
-        switchAuth('login');updateTopbar();
-    }
+    /* ══ ЧАТ-ВИДЖЕТ ══ */
+    function toggleChat(){open=!open;document.getElementById('chat-widget').classList.toggle('open',open);if(open){document.getElementById('badge').style.display='none';if(token){loadTasks();loadNotes();}}}
+    function switchAuth(t){document.querySelectorAll('.a-tab').forEach((b,i)=>b.classList.toggle('active',(t==='login'&&i===0)||(t==='register'&&i===1)));document.getElementById('login-form').classList.toggle('active',t==='login');document.getElementById('reg-form').classList.toggle('active',t==='register');setAmsg('');}
+    async function doRegister(){const u=v('r-u'),p=v('r-p');if(!u||!p){setAmsg('Заполни все поля');return}try{const r=await fetch(`${API}/auth/register?username=${enc(u)}&password=${enc(p)}`,{method:'POST'});r.ok?(setAmsg('✅ Готово! Теперь войди'),switchAuth('login')):setAmsg('❌ Ошибка регистрации');}catch{setAmsg('❌ Сервер не отвечает')}}
+    async function doLogin(){const u=v('l-u'),p=v('l-p');if(!u||!p){setAmsg('Заполни все поля');return}try{const r=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});const txt=await r.text();if(r.ok&&txt&&txt!=='INVALID_CREDENTIALS'){token=txt;me=u;localStorage.setItem('k_token',token);localStorage.setItem('k_user',me);showMain();updateTopbar();loadDashboardTasks();}else setAmsg('❌ Неверный логин или пароль');}catch{setAmsg('❌ Сервер не отвечает')}}
+    function showMain(){document.getElementById('auth-section').style.display='none';document.getElementById('main-section').style.display='flex';document.getElementById('user-lbl').textContent='🐾 '+(me||'');if(!document.getElementById('messages').children.length)addBotMsg(`Привет, ${me}! 👋 Я Kitty — твой ИИ-ассистент. Задавай любые вопросы!`);loadTasks();loadNotes();}
+    function doLogout(){token=me=null;localStorage.removeItem('k_token');localStorage.removeItem('k_user');localStorage.removeItem('k_picture');document.getElementById('auth-section').style.display='flex';document.getElementById('main-section').style.display='none';document.getElementById('messages').innerHTML='';document.getElementById('tmList').innerHTML='<div class="tm-placeholder"><span>🔐</span><p>Войди, чтобы увидеть задачи</p></div>';['tmTot','tmDone','tmOver'].forEach(id=>document.getElementById(id).textContent='—');switchAuth('login');updateTopbar();closeProfile();}
     function setAmsg(t){document.getElementById('auth-msg').textContent=t}
-    function switchTab(tab){
-        document.querySelectorAll('.t-btn').forEach((b,i)=>b.classList.toggle('active',['chat','tasks','notes','timer'][i]===tab));
-        ['chat','tasks','notes','timer'].forEach(t=>{document.getElementById(t+'-tab').style.display=t===tab?'flex':'none';});
-        if(tab==='tasks')loadTasks();if(tab==='notes')loadNotes();
-    }
-    async function sendMsg(){
-        const inp=document.getElementById('msg-in'),txt=inp.value.trim();if(!txt)return;
-        addUserMsg(txt);inp.value='';const typing=addTyping();
-        try{
-            const r=await fetch(`${API}/chat/send?sender=${enc(me||'guest')}&message=${enc(txt)}`,
-                {method:'POST',headers:token?{'Authorization':'Bearer '+token}:{}});
-            const data=await r.json();typing.remove();addBotMsg(data.response||'...');
-        }catch{typing.remove();addBotMsg('Сервер недоступен.')}
-    }
+    function switchTab(tab){document.querySelectorAll('.t-btn').forEach((b,i)=>b.classList.toggle('active',['chat','tasks','notes','timer'][i]===tab));['chat','tasks','notes','timer'].forEach(t=>{document.getElementById(t+'-tab').style.display=t===tab?'flex':'none';});if(tab==='tasks')loadTasks();if(tab==='notes')loadNotes();}
+    async function sendMsg(){const inp=document.getElementById('msg-in'),txt=inp.value.trim();if(!txt)return;addUserMsg(txt);inp.value='';const typing=addTyping();try{const r=await fetch(`${API}/chat/send?sender=${enc(me||'guest')}&message=${enc(txt)}`,{method:'POST',headers:token?{'Authorization':'Bearer '+token}:{}});const data=await r.json();typing.remove();addBotMsg(data.response||'...');}catch{typing.remove();addBotMsg('Сервер недоступен.')}}
     function addUserMsg(txt){msgs().innerHTML+=`<div class="msg user"><div class="msg-av">👤</div><div class="msg-wrap"><div class="bubble">${esc(txt)}</div><div class="msg-time">${ts()}</div></div></div>`;scrollM();}
     function addBotMsg(txt){msgs().innerHTML+=`<div class="msg bot"><div class="msg-av">🐱</div><div class="msg-wrap"><div class="bubble">${esc(txt)}</div><div class="msg-time">${ts()}</div></div></div>`;scrollM();}
     function addTyping(){const d=document.createElement('div');d.className='msg bot';d.innerHTML='<div class="msg-av">🐱</div><div class="typing"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';msgs().appendChild(d);scrollM();return d;}
     function msgs(){return document.getElementById('messages')}
     function scrollM(){const m=msgs();m.scrollTop=m.scrollHeight}
-
-    async function loadTasks(){
-        if(!token)return;
-        try{
-            const r=await fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}});
-            renderTasks(await r.json());
-        }catch{document.getElementById('tasks-list').innerHTML='<div class="empty"><div class="ei">🙈</div>Сервер недоступен</div>'}
-    }
-    function renderTasks(tasks){
-        const el=document.getElementById('tasks-list');
-        if(!tasks.length){el.innerHTML='<div class="empty"><div class="ei">📋</div>Задач нет — добавь первую!</div>';return}
-        el.innerHTML=tasks.map(t=>`<div class="task-item ${t.completed?'done':''}"><div class="t-check" onclick="completeTask(${t.id})">${t.completed?'✓':''}</div><div class="t-title">${esc(t.title)}</div><button class="t-del" onclick="deleteTask(${t.id})">🗑</button></div>`).join('');
-    }
-    async function addTask(){
-        const inp=document.getElementById('task-in'),title=inp.value.trim();if(!title)return;
-        try{await fetch(`${API}/tasks`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,completed:false})});inp.value='';loadTasks();loadDashboardTasks();}catch{}
-    }
+    async function loadTasks(){if(!token)return;try{const r=await fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}});renderTasks(await r.json());}catch{document.getElementById('tasks-list').innerHTML='<div class="empty"><div class="ei">🙈</div>Сервер недоступен</div>'}}
+    function renderTasks(tasks){const el=document.getElementById('tasks-list');if(!tasks.length){el.innerHTML='<div class="empty"><div class="ei">📋</div>Задач нет — добавь первую!</div>';return}el.innerHTML=tasks.map(t=>`<div class="task-item ${t.completed?'done':''}"><div class="t-check" onclick="completeTask(${t.id})">${t.completed?'✓':''}</div><div class="t-title">${esc(t.title)}</div><button class="t-del" onclick="deleteTask(${t.id})">🗑</button></div>`).join('');}
+    async function addTask(){const inp=document.getElementById('task-in'),title=inp.value.trim();if(!title)return;try{await fetch(`${API}/tasks`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,completed:false})});inp.value='';loadTasks();loadDashboardTasks();}catch{}}
     async function completeTask(id){try{await fetch(`${API}/tasks/${id}/complete`,{method:'PUT',headers:{'Authorization':'Bearer '+token}});loadTasks();loadDashboardTasks();}catch{}}
     async function deleteTask(id){try{await fetch(`${API}/tasks/${id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}});loadTasks();loadDashboardTasks();}catch{}}
-
-    // ИСПРАВЛЕНО: теперь GET /notes с токеном, а не /notes/user/{username}
-    async function loadNotes(){
-        if(!token)return;
-        try{
-            const r=await fetch(`${API}/notes`,{headers:{'Authorization':'Bearer '+token}});
-            renderNotes(await r.json());
-        }catch{document.getElementById('notes-list').innerHTML='<div class="empty"><div class="ei">🙈</div>Сервер недоступен</div>'}
-    }
-    function renderNotes(notes){
-        const el=document.getElementById('notes-list');
-        if(!notes.length){el.innerHTML='<div class="empty"><div class="ei">📝</div>Заметок нет — создай первую!</div>';return}
-        el.innerHTML=notes.map(n=>`<div class="note-card"><div class="note-card-title">${esc(n.title||'Без названия')}</div><div class="note-card-body">${esc(n.content||'')}</div><div class="note-card-date">${fmtDate(n.createdAt)}</div><button class="note-del" onclick="deleteNote(${n.id})">✕</button></div>`).join('');
-    }
-    async function addNote(){
-        const title=document.getElementById('note-title').value.trim(),content=document.getElementById('note-body').value.trim();
-        if(!title&&!content)return;
-        try{
-            await fetch(`${API}/notes`,{method:'POST',
-                headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
-                body:JSON.stringify({title,content})});
-            document.getElementById('note-title').value='';
-            document.getElementById('note-body').value='';
-            loadNotes();
-        }catch{}
-    }
-    async function deleteNote(id){
-        try{await fetch(`${API}/notes/${id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}});loadNotes();}catch{}
-    }
+    async function loadNotes(){if(!token)return;try{const r=await fetch(`${API}/notes`,{headers:{'Authorization':'Bearer '+token}});renderNotes(await r.json());}catch{document.getElementById('notes-list').innerHTML='<div class="empty"><div class="ei">🙈</div>Сервер недоступен</div>'}}
+    function renderNotes(notes){const el=document.getElementById('notes-list');if(!notes.length){el.innerHTML='<div class="empty"><div class="ei">📝</div>Заметок нет — создай первую!</div>';return}el.innerHTML=notes.map(n=>`<div class="note-card"><div class="note-card-title">${esc(n.title||'Без названия')}</div><div class="note-card-body">${esc(n.content||'')}</div><div class="note-card-date">${fmtDate(n.createdAt)}</div><button class="note-del" onclick="deleteNote(${n.id})">✕</button></div>`).join('');}
+    async function addNote(){const title=document.getElementById('note-title').value.trim(),content=document.getElementById('note-body').value.trim();if(!title&&!content)return;try{await fetch(`${API}/notes`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title,content})});document.getElementById('note-title').value='';document.getElementById('note-body').value='';loadNotes();}catch{}}
+    async function deleteNote(id){try{await fetch(`${API}/notes/${id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}});loadNotes();}catch{}}
     function fmtDate(dt){if(!dt)return'';const d=new Date(dt);return d.toLocaleDateString('ru',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'});}
-
     let timerInterval=null,timerRunning=false,totalSecs=25*60,remainSecs=25*60,sessions=0;const CIRC=427;
     function setMode(mode,mins){document.querySelectorAll('.tm-btn').forEach((b,i)=>b.classList.toggle('active',['work','short','long'][i]===mode));const labels={work:'Работай!',short:'Отдыхай!',long:'Большой перерыв'};resetTimer();totalSecs=remainSecs=mins*60;document.getElementById('timer-lbl').textContent=labels[mode];updateDisplay();}
     function toggleTimer(){if(timerRunning){clearInterval(timerInterval);timerRunning=false;document.getElementById('start-btn').textContent='▶ Старт';}else{timerRunning=true;document.getElementById('start-btn').textContent='⏸ Пауза';timerInterval=setInterval(()=>{if(remainSecs<=0){clearInterval(timerInterval);timerRunning=false;document.getElementById('start-btn').textContent='▶ Старт';sessions++;document.getElementById('sessions').textContent=sessions;return;}remainSecs--;updateDisplay();},1000);}}
