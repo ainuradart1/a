@@ -534,7 +534,9 @@
 </div>
 
 <script>
-    const API = '';
+    const API = window.location.hostname === 'localhost'
+    ? 'http://localhost:8080'
+    : 'https://a-production-908c.up.railway.app';
     let token = localStorage.getItem('k_token');
     let me    = localStorage.getItem('k_user');
     let open  = false;
