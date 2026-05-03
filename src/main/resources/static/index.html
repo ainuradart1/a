@@ -213,8 +213,12 @@
         }
         .slide.active { opacity: 1; transform: scale(1); }
         .slide img {
-          width: 100%; height: 100%; object-fit: cover; object-position: center;
+          width: 100%; height: 100%; object-fit: cover; object-position: center top;
         }
+        /* ═══ FIX: каждый слайд — своя позиция ═══ */
+        #slide-0 img { object-position: center top; }
+        #slide-1 img { object-position: center top; }
+
         .slide-dots {
           position: absolute; bottom: 28px; left: 50%;
           transform: translateX(-50%);
@@ -894,7 +898,7 @@
             <img src="/slide1.png" alt="Персональный ассистент">
         </div>
         <div class="slide" id="slide-1">
-            <img src="/slide2.png" alt="О системе">
+            <img src="/slide2.png" alt="О системе" style="object-position: center top;">
         </div>
     </div>
     <div class="slide-arrows">
