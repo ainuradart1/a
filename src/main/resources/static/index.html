@@ -864,8 +864,62 @@
     loadWeather();
 
     /* ══ MOOD ══ */
-    function pickMood(v){const today=new Date().toDateString(),hist=JSON.parse(localStorage.getItem('mood_hist')||'{}');hist[today]=v;localStorage.setItem('mood_hist',JSON.stringify(hist));document.querySelectorAll('.me').forEach(b=>b.classList.toggle('picked',+b.dataset.v===v));document.getElementById('moodToday').textContent={1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[v];renderMoodBars();drawChart();}
-    function renderMoodBars(){const hist=JSON.parse(localStorage.getItem('mood_hist')||'{}');const colors={1:'#ef4444',2:'#f97316',3:'#eab308',4:'#22c55e',5:'#818cf8'};const today=new Date().toDateString(),tv=hist[today];if(tv){document.querySelectorAll('.me').forEach(b=>b.classList.toggle('picked',+b.dataset.v===tv));document.getElementById('moodToday').textContent={1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[tv];}const days=[],n=new Date();for(let i=6;i>=0;i--){const d=new Date(n);d.setDate(d.getDate()-i);days.push(d.toDateString());}document.getElementById('moodBars').innerHTML=days.map(d=>{const v=hist[d],h=v?v*9:4;const day=new Date(d).toLocaleDateString('ru',{weekday:'short'}).slice(0,2);return `<div class="mb-col"><div class="mb-bar" style="height:${h}px;background:${v?colors[v]:'var(--border)'}"></div><div class="mb-day">${day}</div></div>`;}).join('');}
+    async function pickMood(v) {
+        document.querySelectorAll('.me').forEach(b => b.classList.toggle('picked', +b.dataset.v === v));
+        document.getElementById('moodToday').textContent = {1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[v];
+        if (!token) return;
+        try {
+            await fetch(`${API}/api/mood`, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+                body: JSON.stringify({mood: v})
+            });
+            renderMoodBars();
+            drawChart();
+        } catch {}
+    }
+
+    async function renderMoodBars() {
+        const colors = {1:'#ef4444',2:'#f97316',3:'#eab308',4:'#22c55e',5:'#818cf8'};
+        if (!token) {
+            document.getElementById('moodBars').innerHTML = '';
+            return;
+        }
+        try {
+            const data = await fetch(`${API}/api/mood`, {
+                headers: {'Authorization':'Bearer '+token}
+            }).then(r => r.json());
+
+            // Показать сегодняшнее настроение
+            const today = new Date().toISOString().slice(0,10);
+            const todayEntry = data.find(e => e.date === today);
+            if (todayEntry) {
+                document.querySelectorAll('.me').forEach(b =>
+                    b.classList.toggle('picked', +b.dataset.v === todayEntry.mood));
+                document.getElementById('moodToday').textContent =
+                    {1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[todayEntry.mood];
+            }
+
+            // Строим массив последних 7 дней
+            const days = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(d.getDate() - i);
+                days.push(d.toISOString().slice(0,10));
+            }
+
+            document.getElementById('moodBars').innerHTML = days.map(dateStr => {
+                const entry = data.find(e => e.date === dateStr);
+                const v = entry ? entry.mood : null;
+                const h = v ? v * 9 : 4;
+                const day = new Date(dateStr).toLocaleDateString('ru', {weekday:'short'}).slice(0,2);
+                return `<div class="mb-col">
+                    <div class="mb-bar" style="height:${h}px;background:${v ? colors[v] : 'var(--border)'}"></div>
+                    <div class="mb-day">${day}</div>
+                </div>`;
+            }).join('');
+        } catch {}
+    }
     renderMoodBars();
 
     /* ══ PRODUCTIVITY CHART ══ */
@@ -874,10 +928,11 @@
     function drawChart(){
       const svg=document.getElementById('prodChart');if(!svg)return;
       const W=svg.parentElement.offsetWidth||500,H=140,PL=10,PR=10,PT=10,PB=22;
-      const hist=JSON.parse(localStorage.getItem('mood_hist')||'{}');
-      const habits=loadHabits();const tlog=JSON.parse(localStorage.getItem('task_log')||'{}');
+      const hist = window._moodCache || {};
+      const habits = window._habitsCache || [];
+      const tlog=JSON.parse(localStorage.getItem('task_log')||'{}');
       const pts=[];const now=new Date();
-      for(let i=chartPeriod-1;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);const key=d.toDateString();const dayStr=d.toLocaleDateString('ru',{day:'numeric',month:'short'});const mood=hist[key]||null;const tasks=tlog[key]||0;const isToday=key===now.toDateString();const habDone=isToday?habits.filter(h=>h.doneToday).length:0;const habPct=habits.length?(habDone/habits.length)*100:0;pts.push({day:dayStr,mood,tasks,habPct});}
+      for(let i=chartPeriod-1;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);const key=d.toDateString();const dayStr=d.toLocaleDateString('ru',{day:'numeric',month:'short'});const mood=hist[key]||null;const tasks=tlog[key]||0;const isToday=key===now.toDateString();const habDone=isToday?habits.filter(h=>h.completedToday).length:0;const habPct=habits.length?(habDone/habits.length)*100:0;pts.push({day:dayStr,mood,tasks,habPct});}
       const maxT=Math.max(...pts.map(p=>p.tasks),1);const N=pts.length;
       const calc=pts.map((p,i)=>({...p,x:PL+(i/(N-1))*(W-PL-PR),yT:PT+(1-p.tasks/maxT)*(H-PT-PB),yH:PT+(1-p.habPct/100)*(H-PT-PB),yM:p.mood?PT+(1-(p.mood-1)/4)*(H-PT-PB):null}));
       // Grid
@@ -903,13 +958,91 @@
     setTimeout(drawChart,120);window.addEventListener('resize',drawChart);
 
     /* ══ GOALS ══ */
-    function loadGoals(){return JSON.parse(localStorage.getItem('goals')||'[]');}
-    function saveGoals(g){localStorage.setItem('goals',JSON.stringify(g));}
-    function toggleGoalForm(){const f=document.getElementById('goalForm');f.classList.toggle('hidden');if(!f.classList.contains('hidden'))document.getElementById('goalTitleInp').focus();}
-    function addGoal(){const t=document.getElementById('goalTitleInp').value.trim();const n=parseInt(document.getElementById('goalTargetInp').value)||10;const c=document.getElementById('goalColorInp').value;if(!t)return;const g=loadGoals();g.unshift({id:Date.now(),title:t,target:n,current:0,color:c});saveGoals(g);toggleGoalForm();document.getElementById('goalTitleInp').value='';document.getElementById('goalTargetInp').value='';renderGoals();}
-    function changeGoal(id,d){const g=loadGoals();const it=g.find(x=>x.id===id);if(!it)return;it.current=Math.max(0,Math.min(it.target,it.current+d));saveGoals(g);renderGoals();}
-    function deleteGoalItem(id){saveGoals(loadGoals().filter(g=>g.id!==id));renderGoals();}
-    function renderGoals(){const g=loadGoals();const el=document.getElementById('goalsList');const em=document.getElementById('goalsEmpty');if(!g.length){el.innerHTML='';em.style.display='block';return;}em.style.display='none';el.innerHTML=g.map(x=>{const pct=Math.round(x.current/x.target*100);return`<div class="goal-item"><div class="goal-top"><div class="goal-title">${esc(x.title)} ${pct>=100?'🏆':''}</div><span class="goal-pct-badge" style="background:${x.color}22;color:${x.color}">${pct}%</span><button class="goal-del" onclick="deleteGoalItem(${x.id})">✕</button></div><div class="goal-track"><div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${x.color},${x.color}aa)"></div></div><span class="goal-val">${x.current}/${x.target}</span></div><div class="goal-controls"><button class="goal-ctrl" onclick="changeGoal(${x.id},-1)">−1</button><button class="goal-ctrl" onclick="changeGoal(${x.id},+1)">+1</button><button class="goal-ctrl" onclick="changeGoal(${x.id},+5)">+5</button><button class="goal-ctrl" onclick="changeGoal(${x.id},${x.target-x.current})" style="color:#22c55e">✓ Done</button></div></div>`;}).join('');}
+    async function loadGoals() {
+        if (!token) return [];
+        try {
+            return await fetch(`${API}/api/goals`, {
+                headers: {'Authorization':'Bearer '+token}
+            }).then(r => r.json());
+        } catch { return []; }
+    }
+
+    function toggleGoalForm() {
+        const f = document.getElementById('goalForm');
+        f.classList.toggle('hidden');
+        if (!f.classList.contains('hidden')) document.getElementById('goalTitleInp').focus();
+    }
+
+    async function addGoal() {
+        const t = document.getElementById('goalTitleInp').value.trim();
+        const n = parseInt(document.getElementById('goalTargetInp').value) || 10;
+        if (!t || !token) return;
+        try {
+            await fetch(`${API}/api/goals`, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+                body: JSON.stringify({title: t, target: n})
+            });
+            toggleGoalForm();
+            document.getElementById('goalTitleInp').value = '';
+            document.getElementById('goalTargetInp').value = '';
+            renderGoals();
+        } catch {}
+    }
+
+    async function changeGoal(id, delta) {
+        if (!token) return;
+        try {
+            await fetch(`${API}/api/goals/${id}/progress`, {
+                method: 'PATCH',
+                headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+                body: JSON.stringify({delta: delta})
+            });
+            renderGoals();
+        } catch {}
+    }
+
+    async function deleteGoalItem(id) {
+        if (!token) return;
+        try {
+            await fetch(`${API}/api/goals/${id}`, {
+                method: 'DELETE',
+                headers: {'Authorization':'Bearer '+token}
+            });
+            renderGoals();
+        } catch {}
+    }
+
+    async function renderGoals() {
+        const g = await loadGoals();
+        const el = document.getElementById('goalsList');
+        const em = document.getElementById('goalsEmpty');
+        if (!g.length) { el.innerHTML = ''; em.style.display = 'block'; return; }
+        em.style.display = 'none';
+        const color = '#6b3fa0';
+        el.innerHTML = g.map(x => {
+            const pct = Math.round(x.current / x.target * 100);
+            return `<div class="goal-item">
+                <div class="goal-top">
+                    <div class="goal-title">${esc(x.title)} ${pct >= 100 ? '🏆' : ''}</div>
+                    <span class="goal-pct-badge" style="background:${color}22;color:${color}">${pct}%</span>
+                    <button class="goal-del" onclick="deleteGoalItem(${x.id})">✕</button>
+                </div>
+                <div class="goal-track">
+                    <div class="goal-bar-track">
+                        <div class="goal-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${color},${color}aa)"></div>
+                    </div>
+                    <span class="goal-val">${x.current}/${x.target}</span>
+                </div>
+                <div class="goal-controls">
+                    <button class="goal-ctrl" onclick="changeGoal(${x.id},-1)">−1</button>
+                    <button class="goal-ctrl" onclick="changeGoal(${x.id},+1)">+1</button>
+                    <button class="goal-ctrl" onclick="changeGoal(${x.id},+5)">+5</button>
+                    <button class="goal-ctrl" onclick="changeGoal(${x.id},${x.target - x.current})" style="color:#22c55e">✓ Done</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
     renderGoals();
 
     /* ══ EISENHOWER ══ */
@@ -958,7 +1091,27 @@
     function openDrawer(){drawerOpen=true;document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');document.getElementById('burgerBtn').classList.add('active');document.body.style.overflow='hidden';updateDrawerAnalytics();renderDrHabits();if(token){loadDrTasks();loadDrNotes();}}
     function closeDrawer(){drawerOpen=false;document.getElementById('drawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open');document.getElementById('burgerBtn').classList.remove('active');document.body.style.overflow='';}
     function switchDrawerTab(t){document.getElementById('tabProd').classList.toggle('active',t==='prod');document.getElementById('tabBrain').classList.toggle('active',t==='brain');document.getElementById('panelProd').classList.toggle('active',t==='prod');document.getElementById('panelBrain').classList.toggle('active',t==='brain');}
-    function updateDrawerAnalytics(){const h=loadHabits();const done=h.filter(x=>x.doneToday).length;const pH=h.length?Math.round(done/h.length*100):0;document.getElementById('anHabits').textContent=h.length;document.getElementById('pbHabits').style.width=pH+'%';document.getElementById('pbHabitsVal').textContent=pH+'%';document.getElementById('anSessions').textContent=miniSessions;if(token){fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()).then(t=>{const tot=t.length,dn=t.filter(x=>x.completed).length,p=tot?Math.round(dn/tot*100):0;document.getElementById('anTasks').textContent=tot;document.getElementById('anDone').textContent=dn;document.getElementById('pbTasks').style.width=p+'%';document.getElementById('pbTasksVal').textContent=p+'%';}).catch(()=>{});}}
+    async function updateDrawerAnalytics(){
+        document.getElementById('anSessions').textContent=miniSessions;
+        if(token){
+            try {
+                const [tasks, habits] = await Promise.all([
+                    fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),
+                    loadHabits()
+                ]);
+                const tot=tasks.length,dn=tasks.filter(x=>x.completed).length,p=tot?Math.round(dn/tot*100):0;
+                document.getElementById('anTasks').textContent=tot;
+                document.getElementById('anDone').textContent=dn;
+                document.getElementById('pbTasks').style.width=p+'%';
+                document.getElementById('pbTasksVal').textContent=p+'%';
+                const done=habits.filter(x=>x.completedToday).length;
+                const pH=habits.length?Math.round(done/habits.length*100):0;
+                document.getElementById('anHabits').textContent=habits.length;
+                document.getElementById('pbHabits').style.width=pH+'%';
+                document.getElementById('pbHabitsVal').textContent=pH+'%';
+            } catch {}
+        }
+    }
 
     /* MINI TIMER */
     let miniInt=null,miniRun=false,miniTotal=25*60,miniRemain=25*60,miniSessions=0;const MINI_C=175.9;
@@ -975,13 +1128,78 @@
     async function drComplete(id){if(!token)return;try{await fetch(`${API}/tasks/${id}/complete`,{method:'PUT',headers:{'Authorization':'Bearer '+token}});loadDrTasks();loadTasks();updateDrawerAnalytics();logTask();}catch{}}
 
     /* DRAWER HABITS */
-    function loadHabits(){return JSON.parse(localStorage.getItem('habits')||'[]');}
-    function saveHabits(h){localStorage.setItem('habits',JSON.stringify(h));}
-    function toggleDrHabitForm(){const f=document.getElementById('drHabitForm');f.style.display=f.style.display==='flex'?'none':'flex';if(f.style.display==='flex')document.getElementById('drHabitInp').focus();}
-    function addDrHabit(){const n=document.getElementById('drHabitInp').value.trim();if(!n)return;const h=loadHabits();h.push({name:n,doneToday:false,streak:0});saveHabits(h);document.getElementById('drHabitInp').value='';document.getElementById('drHabitForm').style.display='none';renderDrHabits();}
-    function renderDrHabits(){const h=loadHabits();const el=document.getElementById('drHabitsList');if(!h.length){el.innerHTML='<div style="text-align:center;padding:10px;color:var(--muted);font-size:.8rem">Нажми + чтобы добавить!</div>';return;}el.innerHTML=h.map((x,i)=>`<div class="dr-habit ${x.doneToday?'h-done':''}"><div class="dr-h-check" onclick="toggleDrHabit(${i})">${x.doneToday?'✓':''}</div><span class="dr-h-name">${esc(x.name)}</span><span class="dr-h-streak">${x.streak>0?'🔥'+x.streak:''}</span><button class="dr-h-del" onclick="deleteDrHabit(${i})">✕</button></div>`).join('');}
-    function toggleDrHabit(i){const h=loadHabits();h[i].doneToday=!h[i].doneToday;h[i].streak=h[i].doneToday?(h[i].streak||0)+1:Math.max(0,(h[i].streak||1)-1);saveHabits(h);renderDrHabits();updateDrawerAnalytics();drawChart();}
-    function deleteDrHabit(i){const h=loadHabits();h.splice(i,1);saveHabits(h);renderDrHabits();}
+    async function loadHabits() {
+        if (!token) return [];
+        try {
+            return await fetch(`${API}/api/habits`, {
+                headers: {'Authorization':'Bearer '+token}
+            }).then(r => r.json());
+        } catch { return []; }
+    }
+
+    function toggleDrHabitForm() {
+        const f = document.getElementById('drHabitForm');
+        f.style.display = f.style.display === 'flex' ? 'none' : 'flex';
+        if (f.style.display === 'flex') document.getElementById('drHabitInp').focus();
+    }
+
+    async function addDrHabit() {
+        const n = document.getElementById('drHabitInp').value.trim();
+        if (!n || !token) return;
+        try {
+            await fetch(`${API}/api/habits`, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+                body: JSON.stringify({title: n})
+            });
+            document.getElementById('drHabitInp').value = '';
+            document.getElementById('drHabitForm').style.display = 'none';
+            renderDrHabits();
+        } catch {}
+    }
+
+    async function renderDrHabits() {
+        const el = document.getElementById('drHabitsList');
+        if (!token) {
+            el.innerHTML = '<div style="text-align:center;padding:10px;color:var(--muted);font-size:.8rem">🔐 Войдите чтобы увидеть привычки</div>';
+            return;
+        }
+        const h = await loadHabits();
+        if (!h.length) {
+            el.innerHTML = '<div style="text-align:center;padding:10px;color:var(--muted);font-size:.8rem">Нажми + чтобы добавить!</div>';
+            return;
+        }
+        el.innerHTML = h.map(x => `
+            <div class="dr-habit ${x.completedToday ? 'h-done' : ''}">
+                <div class="dr-h-check" onclick="toggleDrHabit(${x.id})">${x.completedToday ? '✓' : ''}</div>
+                <span class="dr-h-name">${esc(x.title)}</span>
+                <button class="dr-h-del" onclick="deleteDrHabit(${x.id})">✕</button>
+            </div>`).join('');
+    }
+
+    async function toggleDrHabit(id) {
+        if (!token) return;
+        try {
+            await fetch(`${API}/api/habits/${id}/toggle`, {
+                method: 'PATCH',
+                headers: {'Authorization':'Bearer '+token}
+            });
+            renderDrHabits();
+            updateDrawerAnalytics();
+            drawChart();
+        } catch {}
+    }
+
+    async function deleteDrHabit(id) {
+        if (!token) return;
+        try {
+            await fetch(`${API}/api/habits/${id}`, {
+                method: 'DELETE',
+                headers: {'Authorization':'Bearer '+token}
+            });
+            renderDrHabits();
+        } catch {}
+    }
     renderDrHabits();
 
     /* DRAWER NOTES */
@@ -1009,7 +1227,7 @@
     renderDrKb();
 
     /* ══ PROFILE ══ */
-    async function openProfile(){if(!token)return;document.getElementById('profileOverlay').classList.add('open');document.body.style.overflow='hidden';const h=loadHabits();document.getElementById('pmStatHabits').textContent=h.length;try{const[p,t,n]=await Promise.all([fetch(`${API}/api/profile`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),fetch(`${API}/notes`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json())]);document.getElementById('pmHeaderName').textContent=p.username||me;document.getElementById('pmHeaderEmail').textContent=p.email||'';document.getElementById('pmProvider').textContent=p.provider==='GOOGLE'?'🌐 Google':'🔐 Локальный';const av=document.getElementById('pmAvatar');if(p.picture)av.innerHTML=`<img src="${esc(p.picture)}" alt="a">`;else av.textContent=(p.username||me||'А').charAt(0).toUpperCase();document.getElementById('pmNameInput').value=p.username||'';document.getElementById('pmBioInput').value=p.bio||'';document.getElementById('pmPicInput').value=p.picture||'';document.getElementById('pmStatTasks').textContent=t.length||0;document.getElementById('pmStatNotes').textContent=n.length||0;}catch{}}
+    async function openProfile(){if(!token)return;document.getElementById('profileOverlay').classList.add('open');document.body.style.overflow='hidden';const h=await loadHabits();document.getElementById('pmStatHabits').textContent=h.length;try{const[p,t,n]=await Promise.all([fetch(`${API}/api/profile`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),fetch(`${API}/notes`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json())]);document.getElementById('pmHeaderName').textContent=p.username||me;document.getElementById('pmHeaderEmail').textContent=p.email||'';document.getElementById('pmProvider').textContent=p.provider==='GOOGLE'?'🌐 Google':'🔐 Локальный';const av=document.getElementById('pmAvatar');if(p.picture)av.innerHTML=`<img src="${esc(p.picture)}" alt="a">`;else av.textContent=(p.username||me||'А').charAt(0).toUpperCase();document.getElementById('pmNameInput').value=p.username||'';document.getElementById('pmBioInput').value=p.bio||'';document.getElementById('pmPicInput').value=p.picture||'';document.getElementById('pmStatTasks').textContent=t.length||0;document.getElementById('pmStatNotes').textContent=n.length||0;}catch{}}
     function closeProfile(){document.getElementById('profileOverlay').classList.remove('open');document.body.style.overflow='';}
     function closeProfileIfOutside(e){if(e.target===document.getElementById('profileOverlay'))closeProfile();}
     async function saveProfile(){const u=document.getElementById('pmNameInput').value.trim();const b=document.getElementById('pmBioInput').value.trim();const pi=document.getElementById('pmPicInput').value.trim();try{const r=await fetch(`${API}/api/profile`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username:u,bio:b,picture:pi})});if(!r.ok)throw new Error();const d=await r.json();if(d.username){me=d.username;localStorage.setItem('k_user',me);}updateTopbar();document.getElementById('pmMsg').textContent='✅ Сохранено!';document.getElementById('pmMsg').className='pm-msg ok';setTimeout(()=>document.getElementById('pmMsg').textContent='',2500);}catch{document.getElementById('pmMsg').textContent='❌ Ошибка';document.getElementById('pmMsg').className='pm-msg err';}}
@@ -1020,7 +1238,26 @@
     function switchAuth(t){document.querySelectorAll('.a-tab').forEach((b,i)=>b.classList.toggle('active',(t==='login'&&i===0)||(t==='register'&&i===1)));document.getElementById('login-form').classList.toggle('active',t==='login');document.getElementById('reg-form').classList.toggle('active',t==='register');setAmsg('');}
     async function doRegister(){const u=v('r-u'),p=v('r-p');if(!u||!p){setAmsg('Заполни все поля');return;}try{const r=await fetch(`${API}/auth/register?username=${enc(u)}&password=${enc(p)}`,{method:'POST'});r.ok?(setAmsg('✅ Готово! Теперь войди'),switchAuth('login')):setAmsg('❌ Ошибка');}catch{setAmsg('❌ Сервер не отвечает');}}
     async function doLogin(){const u=v('l-u'),p=v('l-p');if(!u||!p){setAmsg('Заполни все поля');return;}try{const r=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});const txt=await r.text();if(r.ok&&txt&&txt!=='INVALID_CREDENTIALS'){token=txt;me=u;localStorage.setItem('k_token',token);localStorage.setItem('k_user',me);showMain();updateTopbar();if(drawerOpen){loadDrTasks();loadDrNotes();}}else setAmsg('❌ Неверный логин или пароль');}catch{setAmsg('❌ Сервер не отвечает');}}
-    function showMain(){document.getElementById('auth-section').style.display='none';document.getElementById('main-section').style.display='flex';document.getElementById('user-lbl').textContent='🐾 '+(me||'');if(!document.getElementById('messages').children.length)addBotMsg(`Привет, ${me}! 👋 Я Kitty — твой ИИ-ассистент!`);loadTasks();loadNotes();}
+    function showMain(){
+        document.getElementById('auth-section').style.display='none';
+        document.getElementById('main-section').style.display='flex';
+        document.getElementById('user-lbl').textContent='🐾 '+(me||'');
+        if(!document.getElementById('messages').children.length)addBotMsg(`Привет, ${me}! 👋 Я Kitty — твой ИИ-ассистент!`);
+        loadTasks();
+        loadNotes();
+        // Кешируем данные для графика
+        fetch(`${API}/api/mood`, {headers:{'Authorization':'Bearer '+token}})
+            .then(r=>r.json()).then(data=>{
+                const map = {};
+                data.forEach(e => map[new Date(e.date).toDateString()] = e.mood);
+                window._moodCache = map;
+                drawChart();
+            }).catch(()=>{});
+        loadHabits().then(h => { window._habitsCache = h; drawChart(); });
+        renderMoodBars();
+        renderGoals();
+        renderDrHabits();
+    }
     function doLogout(){token=me=null;localStorage.removeItem('k_token');localStorage.removeItem('k_user');localStorage.removeItem('k_picture');document.getElementById('auth-section').style.display='flex';document.getElementById('main-section').style.display='none';document.getElementById('messages').innerHTML='';switchAuth('login');updateTopbar();closeProfile();}
     function setAmsg(t){document.getElementById('auth-msg').textContent=t;}
     function switchTab(tab){document.querySelectorAll('.t-btn').forEach((b,i)=>b.classList.toggle('active',['chat','tasks','notes','timer'][i]===tab));['chat','tasks','notes','timer'].forEach(t=>{document.getElementById(t+'-tab').style.display=t===tab?'flex':'none';});if(tab==='tasks')loadTasks();if(tab==='notes')loadNotes();}
