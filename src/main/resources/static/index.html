@@ -15,8 +15,6 @@
         .blob-1{width:600px;height:600px;background:var(--purple3);top:-200px;left:-200px;}
         .blob-2{width:400px;height:400px;background:#c084fc;bottom:100px;right:-100px;}
         .blob-3{width:300px;height:300px;background:#818cf8;top:50%;left:40%;}
-
-        /* TOPBAR */
         .topbar{position:sticky;top:0;z-index:300;background:rgba(255,255,255,.82);backdrop-filter:blur(20px);border-bottom:1.5px solid var(--border);height:62px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;}
         .tb-logo{display:flex;align-items:center;gap:10px;}
         .tb-logo img{width:38px;height:38px;border-radius:50%;object-fit:cover;box-shadow:0 2px 8px rgba(107,63,160,.25);}
@@ -38,8 +36,6 @@
         .burger-btn.active span:nth-child(1){transform:translateY(7px) rotate(45deg);}
         .burger-btn.active span:nth-child(2){opacity:0;transform:scaleX(0);}
         .burger-btn.active span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
-
-        /* PROFILE MODAL */
         .profile-overlay{position:fixed;inset:0;background:rgba(20,15,40,.45);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
         .profile-overlay.open{display:flex;animation:fadeIn .2s;}
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
@@ -72,8 +68,6 @@
         .pm-msg{font-size:.76rem;text-align:center;min-height:14px;font-weight:700;}
         .pm-msg.ok{color:var(--green);}
         .pm-msg.err{color:var(--red);}
-
-        /* DRAWER */
         .drawer-overlay{position:fixed;inset:0;background:rgba(20,15,40,.35);z-index:400;opacity:0;pointer-events:none;backdrop-filter:blur(2px);transition:opacity .3s;}
         .drawer-overlay.open{opacity:1;pointer-events:all;}
         .drawer{position:fixed;top:0;right:0;bottom:0;width:420px;max-width:95vw;background:var(--card);box-shadow:-8px 0 60px rgba(107,63,160,.18);z-index:450;transform:translateX(100%);transition:transform .35s cubic-bezier(.22,.68,0,1.1);display:flex;flex-direction:column;overflow:hidden;}
@@ -131,7 +125,6 @@
         .dr-habit.h-done .dr-h-check{background:linear-gradient(135deg,var(--purple),var(--purple2));border-color:var(--purple);color:#fff;}
         .dr-h-name{flex:1;font-size:.82rem;font-weight:600;color:var(--dark);}
         .dr-habit.h-done .dr-h-name{text-decoration:line-through;color:var(--muted);}
-        .dr-h-streak{font-size:.68rem;font-weight:800;color:var(--purple);}
         .dr-h-del{background:none;border:none;cursor:pointer;color:var(--muted);font-size:.75rem;transition:color .2s;}
         .dr-h-del:hover{color:var(--red);}
         .pb-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
@@ -139,7 +132,6 @@
         .pb-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
         .pb-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--purple),var(--purple3));transition:width .6s ease;}
         .pb-val{font-size:.7rem;font-weight:700;color:var(--purple);width:28px;text-align:right;}
-        /* Brain panel */
         .dr-notes-list{display:flex;flex-direction:column;gap:7px;max-height:200px;overflow-y:auto;}
         .dr-note{background:white;border-radius:12px;padding:11px 13px;border:1px solid var(--border);position:relative;}
         .dr-note-title{font-size:.82rem;font-weight:700;color:var(--dark);margin-bottom:3px;padding-right:22px;}
@@ -162,8 +154,6 @@
         .dr-kb-title{font-size:.8rem;font-weight:700;color:var(--dark);}
         .dr-kb-tags{display:flex;gap:5px;flex-wrap:wrap;}
         .dr-kb-tag{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:8px;background:var(--purple-light);color:var(--purple);}
-
-        /* HERO */
         .hero{position:relative;overflow:hidden;height:calc(100vh - 62px);min-height:500px;max-height:820px;}
         .slides-container{position:relative;width:100%;height:100%;}
         .slide{position:absolute;inset:0;opacity:0;transition:opacity .8s ease,transform .8s ease;transform:scale(1.02);}
@@ -177,8 +167,6 @@
         .slide-arrow:hover{background:rgba(255,255,255,.4);transform:scale(1.08);}
         .scroll-hint{position:absolute;bottom:70px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);font-size:.78rem;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:6px;animation:bounce 2s ease-in-out infinite;}
         @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-6px)}}
-
-        /* DASHBOARD */
         .dashboard{position:relative;z-index:1;padding:32px 32px 140px;max-width:1360px;margin:0 auto;display:flex;flex-direction:column;gap:22px;}
         .dash-row{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
         .dash-card{background:var(--card);border:1.5px solid var(--border);border-radius:24px;padding:22px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:12px;transition:transform .2s,box-shadow .2s,border-color .2s;position:relative;overflow:hidden;}
@@ -198,15 +186,11 @@
         .hidden{display:none!important;}
         .tp-btn{padding:6px 12px;border:2px solid var(--border);border-radius:10px;background:var(--purple-light);cursor:pointer;font-size:.72rem;font-weight:700;color:var(--purple);font-family:'Outfit',sans-serif;transition:all .2s;}
         .tp-btn:hover,.tp-btn.active-period{border-color:var(--purple);background:white;}
-
-        /* CLOCK */
         .clock-card{background:linear-gradient(145deg,#1e1533 0%,#2d1b69 100%);border-color:transparent;}
         .clock-card:hover{border-color:#4c3190;}
         .clock-time{font-size:3.2rem;font-weight:900;color:#fff;letter-spacing:-3px;font-variant-numeric:tabular-nums;line-height:1;text-shadow:0 0 40px rgba(167,139,250,.3);}
         .clock-date{font-size:.8rem;color:rgba(255,255,255,.45);font-weight:500;margin-top:4px;}
         .clock-greeting{font-size:1rem;font-weight:700;color:var(--purple3);margin-top:6px;}
-
-        /* WEATHER */
         .wc-top{display:flex;align-items:center;justify-content:space-between;}
         .card-label{font-size:.84rem;font-weight:700;color:var(--soft);}
         .wc-main{display:flex;gap:16px;align-items:center;}
@@ -219,8 +203,6 @@
         .wf-day-name{font-size:.64rem;font-weight:700;color:var(--muted);}
         .wf-day-icon{font-size:1.1rem;}
         .wf-day-temp{font-size:.7rem;font-weight:700;color:var(--dark);}
-
-        /* MOOD */
         .mood-q{font-size:.82rem;color:var(--muted);font-weight:600;}
         .mood-emojis{display:flex;gap:8px;justify-content:center;}
         .me{background:none;border:2px solid var(--border);border-radius:14px;font-size:1.5rem;padding:8px;cursor:pointer;transition:all .2s;}
@@ -231,13 +213,9 @@
         .mb-col{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;}
         .mb-bar{width:100%;border-radius:4px 4px 0 0;transition:height .4s;min-height:4px;}
         .mb-day{font-size:.6rem;color:var(--muted);font-weight:700;}
-
-        /* PRODUCTIVITY CHART */
         .chart-legend{display:flex;gap:14px;flex-wrap:wrap;}
         .cl-item{display:flex;align-items:center;gap:5px;font-size:.74rem;color:var(--soft);font-weight:600;}
         .cl-dot{width:12px;height:3px;border-radius:2px;}
-
-        /* GOALS */
         .goal-item{background:var(--purple-light);border-radius:14px;padding:12px 14px;border:1.5px solid var(--border);display:flex;flex-direction:column;gap:8px;transition:border-color .2s;}
         .goal-item:hover{border-color:var(--purple3);}
         .goal-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
@@ -252,8 +230,6 @@
         .goal-ctrl{padding:4px 10px;border:1px solid var(--border);border-radius:8px;background:white;color:var(--purple);font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;}
         .goal-ctrl:hover{background:var(--purple);color:white;}
         .goal-val{font-size:.7rem;color:var(--muted);font-weight:600;white-space:nowrap;}
-
-        /* EISENHOWER */
         .eisen-quad{background:var(--purple-light);border-radius:16px;overflow:hidden;border:1.5px solid var(--border);transition:border-color .2s;}
         .eisen-quad:hover{border-color:var(--purple3);}
         .eq-head{padding:10px 14px;display:flex;align-items:center;justify-content:space-between;color:#fff;font-size:.78rem;font-weight:700;}
@@ -269,8 +245,6 @@
         .eq-del{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:.7rem;transition:color .2s;padding:2px;}
         .eq-del:hover{color:var(--red);}
         .eq-empty{text-align:center;padding:12px;color:var(--muted);font-size:.72rem;}
-
-        /* CALENDAR */
         .cal-nav{display:flex;align-items:center;justify-content:space-between;}
         .cal-month{font-size:.9rem;font-weight:800;color:var(--dark);}
         .cal-nav-btn{background:var(--purple-light);border:none;border-radius:10px;width:28px;height:28px;cursor:pointer;font-size:.85rem;display:flex;align-items:center;justify-content:center;color:var(--purple);transition:background .2s;}
@@ -289,8 +263,6 @@
         .cal-event-del{margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);font-size:.7rem;}
         .cal-event-del:hover{color:var(--red);}
         .cal-add-form{display:flex;gap:6px;flex-wrap:wrap;}
-
-        /* MEDITATION */
         .med-modes{display:flex;gap:6px;flex-wrap:wrap;}
         .med-mode-btn{padding:6px 14px;border:1.5px solid var(--border);border-radius:12px;background:white;font-size:.74rem;font-weight:700;color:var(--muted);cursor:pointer;font-family:'Outfit',sans-serif;transition:all .2s;}
         .med-mode-btn.active{border-color:var(--purple);color:var(--purple);background:var(--purple-light);}
@@ -315,8 +287,6 @@
         .med-stat{flex:1;background:var(--purple-light);border-radius:12px;padding:10px;text-align:center;}
         .med-stat b{display:block;font-size:1.1rem;font-weight:900;color:var(--purple);}
         .med-stat span{font-size:.65rem;color:var(--muted);font-weight:600;}
-
-        /* CHAT WIDGET */
         #kitty-btn{position:fixed;bottom:28px;right:28px;width:68px;height:68px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:1000;overflow:hidden;box-shadow:0 6px 28px rgba(107,63,160,.45);animation:float 3s ease-in-out infinite;transition:box-shadow .3s;background:linear-gradient(135deg,var(--purple-light),white);padding:4px;}
         #kitty-btn:hover{box-shadow:0 10px 40px rgba(107,63,160,.65);}
         #kitty-btn img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
@@ -431,7 +401,6 @@
         .w-footer{padding:8px 16px;background:var(--purple-light);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:.74rem;color:var(--muted);flex-shrink:0;}
         .logout-btn{background:none;border:none;color:var(--purple);cursor:pointer;font-size:.74rem;font-weight:600;font-family:'Outfit',sans-serif;}
         .logout-btn:hover{text-decoration:underline;}
-
         @media(max-width:900px){.dash-row{grid-template-columns:1fr 1fr!important;}}
         @media(max-width:600px){.dash-row{grid-template-columns:1fr!important;}.dashboard{padding:14px 14px 140px;}#chat-widget{width:calc(100vw - 16px);right:8px;}.drawer{width:100vw;}}
     </style>
@@ -439,7 +408,6 @@
 <body>
 <div class="bg-blobs"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
 
-<!-- ПРОФИЛЬ -->
 <div class="profile-overlay" id="profileOverlay" onclick="closeProfileIfOutside(event)">
     <div class="profile-modal">
         <div class="pm-header">
@@ -467,7 +435,6 @@
     </div>
 </div>
 
-<!-- TOPBAR -->
 <header class="topbar">
     <div class="tb-logo"><img src="/icon.png" alt="Kitty"><span>Kitty Assistant</span></div>
     <div class="tb-center" id="topbarDate"></div>
@@ -482,10 +449,8 @@
     </div>
 </header>
 
-<!-- DRAWER OVERLAY -->
 <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 
-<!-- RIGHT DRAWER -->
 <div class="drawer" id="drawer">
     <div class="drawer-header">
         <div class="dh-top"><div class="dh-title">🐾 Kitty Panel</div><button class="dh-close" onclick="closeDrawer()">✕</button></div>
@@ -495,7 +460,6 @@
         </div>
     </div>
     <div class="drawer-body">
-        <!-- ПРОДУКТИВНОСТЬ -->
         <div class="drawer-panel active" id="panelProd">
             <div class="dr-section">
                 <div class="dr-section-head"><div class="dr-section-title">📊 Аналитика</div></div>
@@ -505,8 +469,10 @@
                     <div class="an-card"><b id="anHabits">—</b><small>Привычек</small></div>
                     <div class="an-card"><b id="anSessions">0</b><small>Сессий</small></div>
                 </div>
-                <div><div class="pb-row"><span class="pb-label">Задачи</span><div class="pb-track"><div class="pb-fill" id="pbTasks" style="width:0%"></div></div><span class="pb-val" id="pbTasksVal">0%</span></div>
-                    <div class="pb-row"><span class="pb-label">Привычки</span><div class="pb-track"><div class="pb-fill" id="pbHabits" style="width:0%"></div></div><span class="pb-val" id="pbHabitsVal">0%</span></div></div>
+                <div>
+                    <div class="pb-row"><span class="pb-label">Задачи</span><div class="pb-track"><div class="pb-fill" id="pbTasks" style="width:0%"></div></div><span class="pb-val" id="pbTasksVal">0%</span></div>
+                    <div class="pb-row"><span class="pb-label">Привычки</span><div class="pb-track"><div class="pb-fill" id="pbHabits" style="width:0%"></div></div><span class="pb-val" id="pbHabitsVal">0%</span></div>
+                </div>
             </div>
             <div class="dr-section">
                 <div class="dr-section-head">
@@ -543,7 +509,6 @@
                 <div id="drHabitForm" style="display:none;gap:8px;margin-top:4px"><input class="dr-inp" id="drHabitInp" placeholder="Новая привычка..." onkeydown="if(event.key==='Enter')addDrHabit()"><button class="dr-add-btn" onclick="addDrHabit()">+</button></div>
             </div>
         </div>
-        <!-- ВТОРОЙ МОЗГ -->
         <div class="drawer-panel" id="panelBrain">
             <div class="dr-section">
                 <div class="dr-section-head"><div class="dr-section-title">📝 Заметки</div></div>
@@ -589,7 +554,6 @@
     </div>
 </div>
 
-<!-- HERO -->
 <section class="hero">
     <div class="slides-container">
         <div class="slide active"><img src="/slide1.png" alt=""></div>
@@ -606,9 +570,7 @@
     <div class="scroll-hint"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>прокрути вниз</div>
 </section>
 
-<!-- DASHBOARD -->
 <main class="dashboard">
-    <!-- ROW 1: Время + Погода + Настроение -->
     <div class="dash-row">
         <div class="dash-card clock-card">
             <svg width="0" height="0"><defs><linearGradient id="ringGrad2" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#a78bfa"/><stop offset="100%" style="stop-color:#818cf8"/></linearGradient></defs></svg>
@@ -637,7 +599,6 @@
         </div>
     </div>
 
-    <!-- ROW 2: График продуктивности (2/3) + Трекер целей (1/3) -->
     <div class="dash-row" style="grid-template-columns:2fr 1fr">
         <div class="dash-card">
             <div class="card-head">
@@ -679,13 +640,6 @@
                 <input class="inp" id="goalTitleInp" placeholder="Название цели..." style="width:100%">
                 <div style="display:flex;gap:6px">
                     <input class="inp" id="goalTargetInp" type="number" min="1" max="100" placeholder="Цель (1-100)" style="flex:1">
-                    <select class="inp" id="goalColorInp" style="flex:1;padding:8px">
-                        <option value="#6b3fa0">🟣 Фиолетовый</option>
-                        <option value="#22c55e">🟢 Зелёный</option>
-                        <option value="#f97316">🟠 Оранжевый</option>
-                        <option value="#3b82f6">🔵 Синий</option>
-                        <option value="#e879a0">🩷 Розовый</option>
-                    </select>
                 </div>
                 <button class="btn-main sm" onclick="addGoal()">Добавить цель</button>
             </div>
@@ -694,7 +648,6 @@
         </div>
     </div>
 
-    <!-- ROW 3: Матрица Эйзенхауэра (2/3) + Медитация (1/3) -->
     <div class="dash-row" style="grid-template-columns:2fr 1fr">
         <div class="dash-card">
             <div class="card-head"><h3>🧩 Матрица Эйзенхауэра</h3><button class="icon-btn" onclick="toggleEisenForm()">+</button></div>
@@ -716,7 +669,6 @@
                 <div class="eisen-quad"><div class="eq-head" style="background:linear-gradient(135deg,#94a3b8,#cbd5e1)"><span>⚪ Удали</span><span class="eq-count" id="eqC4">0</span></div><div class="eq-body" id="eqB4"></div></div>
             </div>
         </div>
-        <!-- МЕДИТАЦИЯ -->
         <div class="dash-card">
             <div class="card-head"><h3>🧘 Медитация</h3></div>
             <div class="med-modes">
@@ -744,12 +696,10 @@
         </div>
     </div>
 
-    <!-- ROW 4: Календарь событий (полная ширина) -->
     <div class="dash-row" style="grid-template-columns:1fr">
         <div class="dash-card">
             <div class="card-head"><h3>🗓 Календарь событий</h3></div>
             <div style="display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:start">
-                <!-- Мини календарь -->
                 <div style="min-width:240px">
                     <div class="cal-nav">
                         <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
@@ -761,7 +711,6 @@
                         <div class="cal-day-head">Чт</div><div class="cal-day-head">Пт</div><div class="cal-day-head">Сб</div><div class="cal-day-head">Вс</div>
                     </div>
                 </div>
-                <!-- События справа -->
                 <div style="display:flex;flex-direction:column;gap:10px">
                     <div style="font-size:.8rem;font-weight:700;color:var(--soft)" id="calSelectedLabel">📅 Выбери день</div>
                     <div class="cal-events" id="calEventsList"></div>
@@ -782,10 +731,8 @@
     </div>
 </main>
 
-<!-- KITTY BUTTON -->
 <button id="kitty-btn" onclick="toggleChat()"><img src="/icon.png" alt="Kitty"><span class="badge" id="badge" style="display:none">1</span></button>
 
-<!-- CHAT WIDGET -->
 <div id="chat-widget">
     <div class="w-header">
         <div class="w-hl"><div class="w-av"><img src="/icon.png" alt="Kitty"></div><div class="w-info"><h3>Kitty Assistant</h3><span><span class="online"></span>ИИ активен</span></div></div>
@@ -874,6 +821,10 @@
                 headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
                 body: JSON.stringify({mood: v})
             });
+            // Обновляем кэш
+            const today = new Date().toDateString();
+            if (!window._moodCache) window._moodCache = {};
+            window._moodCache[today] = v;
             renderMoodBars();
             drawChart();
         } catch {}
@@ -881,18 +832,19 @@
 
     async function renderMoodBars() {
         const colors = {1:'#ef4444',2:'#f97316',3:'#eab308',4:'#22c55e',5:'#818cf8'};
-        if (!token) {
-            document.getElementById('moodBars').innerHTML = '';
-            return;
-        }
+        if (!token) { document.getElementById('moodBars').innerHTML = ''; return; }
         try {
             const data = await fetch(`${API}/api/mood`, {
                 headers: {'Authorization':'Bearer '+token}
             }).then(r => r.json());
 
-            // Показать сегодняшнее настроение
-            const today = new Date().toISOString().slice(0,10);
-            const todayEntry = data.find(e => e.date === today);
+            // Обновляем кэш для графика
+            const map = {};
+            data.forEach(e => { map[new Date(e.date).toDateString()] = e.mood; });
+            window._moodCache = map;
+
+            const todayStr = new Date().toISOString().slice(0,10);
+            const todayEntry = data.find(e => e.date === todayStr);
             if (todayEntry) {
                 document.querySelectorAll('.me').forEach(b =>
                     b.classList.toggle('picked', +b.dataset.v === todayEntry.mood));
@@ -900,11 +852,9 @@
                     {1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'}[todayEntry.mood];
             }
 
-            // Строим массив последних 7 дней
             const days = [];
             for (let i = 6; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(d.getDate() - i);
+                const d = new Date(); d.setDate(d.getDate() - i);
                 days.push(d.toISOString().slice(0,10));
             }
 
@@ -913,10 +863,7 @@
                 const v = entry ? entry.mood : null;
                 const h = v ? v * 9 : 4;
                 const day = new Date(dateStr).toLocaleDateString('ru', {weekday:'short'}).slice(0,2);
-                return `<div class="mb-col">
-                    <div class="mb-bar" style="height:${h}px;background:${v ? colors[v] : 'var(--border)'}"></div>
-                    <div class="mb-day">${day}</div>
-                </div>`;
+                return `<div class="mb-col"><div class="mb-bar" style="height:${h}px;background:${v ? colors[v] : 'var(--border)'}"></div><div class="mb-day">${day}</div></div>`;
             }).join('');
         } catch {}
     }
@@ -928,28 +875,24 @@
     function drawChart(){
       const svg=document.getElementById('prodChart');if(!svg)return;
       const W=svg.parentElement.offsetWidth||500,H=140,PL=10,PR=10,PT=10,PB=22;
-      const hist = window._moodCache || {};
-      const habits = window._habitsCache || [];
+      const hist=window._moodCache||{};
+      const habits=window._habitsCache||[];
       const tlog=JSON.parse(localStorage.getItem('task_log')||'{}');
       const pts=[];const now=new Date();
       for(let i=chartPeriod-1;i>=0;i--){const d=new Date(now);d.setDate(d.getDate()-i);const key=d.toDateString();const dayStr=d.toLocaleDateString('ru',{day:'numeric',month:'short'});const mood=hist[key]||null;const tasks=tlog[key]||0;const isToday=key===now.toDateString();const habDone=isToday?habits.filter(h=>h.completedToday).length:0;const habPct=habits.length?(habDone/habits.length)*100:0;pts.push({day:dayStr,mood,tasks,habPct});}
       const maxT=Math.max(...pts.map(p=>p.tasks),1);const N=pts.length;
       const calc=pts.map((p,i)=>({...p,x:PL+(i/(N-1))*(W-PL-PR),yT:PT+(1-p.tasks/maxT)*(H-PT-PB),yH:PT+(1-p.habPct/100)*(H-PT-PB),yM:p.mood?PT+(1-(p.mood-1)/4)*(H-PT-PB):null}));
-      // Grid
       const g=document.getElementById('chartGrid');g.innerHTML='';
       [0,25,50,75,100].forEach(pct=>{const y=PT+(1-pct/100)*(H-PT-PB);const l=document.createElementNS('http://www.w3.org/2000/svg','line');l.setAttribute('x1',PL);l.setAttribute('x2',W-PR);l.setAttribute('y1',y);l.setAttribute('y2',y);l.setAttribute('stroke','#e4ddf7');l.setAttribute('stroke-width','1');g.appendChild(l);});
       function path(arr,k){const v=arr.filter(p=>p[k]!==null);if(v.length<2)return'';let d=`M ${v[0].x} ${v[0][k]}`;for(let i=1;i<v.length;i++){const a=v[i-1],b=v[i],cx=(a.x+b.x)/2;d+=` C ${cx} ${a[k]}, ${cx} ${b[k]}, ${b.x} ${b[k]}`;}return d;}
       function area(arr,k){const p=path(arr,k);if(!p)return'';const v=arr.filter(a=>a[k]!==null);return p+` L ${v[v.length-1].x} ${H-PB} L ${v[0].x} ${H-PB} Z`;}
       document.getElementById('chartLineT').setAttribute('d',path(calc,'yT'));document.getElementById('chartLineH').setAttribute('d',path(calc,'yH'));document.getElementById('chartLineM').setAttribute('d',path(calc,'yM'));
       document.getElementById('chartAreaT').setAttribute('d',area(calc,'yT'));document.getElementById('chartAreaH').setAttribute('d',area(calc,'yH'));document.getElementById('chartAreaM').setAttribute('d',area(calc,'yM'));
-      // X labels
       const xl=document.getElementById('chartXLabels');xl.innerHTML='';const step=Math.max(1,Math.floor(N/7));
       calc.forEach((p,i)=>{if(i%step!==0&&i!==N-1)return;const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x',p.x);t.setAttribute('y',H-4);t.setAttribute('text-anchor','middle');t.setAttribute('font-size','10');t.setAttribute('fill','#a09bc0');t.setAttribute('font-weight','600');t.textContent=p.day;xl.appendChild(t);});
-      // Dots mood
       const dl=document.getElementById('chartDots');dl.innerHTML='';
       calc.forEach(p=>{if(p.yM===null)return;const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',p.x);c.setAttribute('cy',p.yM);c.setAttribute('r','4');c.setAttribute('fill','#f97316');c.setAttribute('stroke','white');c.setAttribute('stroke-width','2');dl.appendChild(c);});
       svg._pts=calc;svg._dims={W,H,PL,PR,PT,PB};
-      // Summary
       const ma=calc.filter(p=>p.mood);const mAvg=ma.length?ma.reduce((a,b)=>a+b.mood,0)/ma.length:0;const mE={1:'😞',2:'😔',3:'😐',4:'🙂',5:'😄'};const totT=calc.reduce((a,b)=>a+b.tasks,0);const hAvg=Math.round(calc.reduce((a,b)=>a+b.habPct,0)/N);
       document.getElementById('chartSummary').innerHTML=`<div style="background:var(--purple-light);border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.1rem;font-weight:900;color:var(--purple)">${chartPeriod}д</div><div style="font-size:.65rem;color:var(--muted);font-weight:600">Период</div></div><div style="background:var(--purple-light);border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.1rem;font-weight:900;color:var(--purple)">${totT}</div><div style="font-size:.65rem;color:var(--muted);font-weight:600">Задач</div></div><div style="background:var(--purple-light);border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.1rem;font-weight:900;color:#22c55e">${hAvg}%</div><div style="font-size:.65rem;color:var(--muted);font-weight:600">Привычки</div></div><div style="background:var(--purple-light);border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.1rem;font-weight:900;color:#f97316">${mE[Math.round(mAvg)]||'—'}</div><div style="font-size:.65rem;color:var(--muted);font-weight:600">Настроение</div></div>`;
     }
@@ -958,89 +901,41 @@
     setTimeout(drawChart,120);window.addEventListener('resize',drawChart);
 
     /* ══ GOALS ══ */
-    async function loadGoals() {
-        if (!token) return [];
-        try {
-            return await fetch(`${API}/api/goals`, {
-                headers: {'Authorization':'Bearer '+token}
-            }).then(r => r.json());
-        } catch { return []; }
+    async function loadGoals(){
+        if(!token)return[];
+        try{return await fetch(`${API}/api/goals`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json());}
+        catch{return[];}
     }
-
-    function toggleGoalForm() {
-        const f = document.getElementById('goalForm');
-        f.classList.toggle('hidden');
-        if (!f.classList.contains('hidden')) document.getElementById('goalTitleInp').focus();
-    }
-
-    async function addGoal() {
-        const t = document.getElementById('goalTitleInp').value.trim();
-        const n = parseInt(document.getElementById('goalTargetInp').value) || 10;
-        if (!t || !token) return;
-        try {
-            await fetch(`${API}/api/goals`, {
-                method: 'POST',
-                headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
-                body: JSON.stringify({title: t, target: n})
-            });
+    function toggleGoalForm(){const f=document.getElementById('goalForm');f.classList.toggle('hidden');if(!f.classList.contains('hidden'))document.getElementById('goalTitleInp').focus();}
+    async function addGoal(){
+        const t=document.getElementById('goalTitleInp').value.trim();
+        const n=parseInt(document.getElementById('goalTargetInp').value)||10;
+        if(!t||!token)return;
+        try{
+            await fetch(`${API}/api/goals`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title:t,target:n})});
             toggleGoalForm();
-            document.getElementById('goalTitleInp').value = '';
-            document.getElementById('goalTargetInp').value = '';
+            document.getElementById('goalTitleInp').value='';
+            document.getElementById('goalTargetInp').value='';
             renderGoals();
-        } catch {}
+        }catch{}
     }
-
-    async function changeGoal(id, delta) {
-        if (!token) return;
-        try {
-            await fetch(`${API}/api/goals/${id}/progress`, {
-                method: 'PATCH',
-                headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
-                body: JSON.stringify({delta: delta})
-            });
-            renderGoals();
-        } catch {}
+    async function changeGoal(id,delta){
+        if(!token)return;
+        try{await fetch(`${API}/api/goals/${id}/progress`,{method:'PATCH',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({delta:delta})});renderGoals();}catch{}
     }
-
-    async function deleteGoalItem(id) {
-        if (!token) return;
-        try {
-            await fetch(`${API}/api/goals/${id}`, {
-                method: 'DELETE',
-                headers: {'Authorization':'Bearer '+token}
-            });
-            renderGoals();
-        } catch {}
+    async function deleteGoalItem(id){
+        if(!token)return;
+        try{await fetch(`${API}/api/goals/${id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}});renderGoals();}catch{}
     }
-
-    async function renderGoals() {
-        const g = await loadGoals();
-        const el = document.getElementById('goalsList');
-        const em = document.getElementById('goalsEmpty');
-        if (!g.length) { el.innerHTML = ''; em.style.display = 'block'; return; }
-        em.style.display = 'none';
-        const color = '#6b3fa0';
-        el.innerHTML = g.map(x => {
-            const pct = Math.round(x.current / x.target * 100);
-            return `<div class="goal-item">
-                <div class="goal-top">
-                    <div class="goal-title">${esc(x.title)} ${pct >= 100 ? '🏆' : ''}</div>
-                    <span class="goal-pct-badge" style="background:${color}22;color:${color}">${pct}%</span>
-                    <button class="goal-del" onclick="deleteGoalItem(${x.id})">✕</button>
-                </div>
-                <div class="goal-track">
-                    <div class="goal-bar-track">
-                        <div class="goal-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${color},${color}aa)"></div>
-                    </div>
-                    <span class="goal-val">${x.current}/${x.target}</span>
-                </div>
-                <div class="goal-controls">
-                    <button class="goal-ctrl" onclick="changeGoal(${x.id},-1)">−1</button>
-                    <button class="goal-ctrl" onclick="changeGoal(${x.id},+1)">+1</button>
-                    <button class="goal-ctrl" onclick="changeGoal(${x.id},+5)">+5</button>
-                    <button class="goal-ctrl" onclick="changeGoal(${x.id},${x.target - x.current})" style="color:#22c55e">✓ Done</button>
-                </div>
-            </div>`;
+    async function renderGoals(){
+        const g=await loadGoals();
+        const el=document.getElementById('goalsList');const em=document.getElementById('goalsEmpty');
+        if(!g.length){el.innerHTML='';em.style.display='block';return;}
+        em.style.display='none';
+        const color='#6b3fa0';
+        el.innerHTML=g.map(x=>{
+            const pct=Math.round(x.current/x.target*100);
+            return`<div class="goal-item"><div class="goal-top"><div class="goal-title">${esc(x.title)} ${pct>=100?'🏆':''}</div><span class="goal-pct-badge" style="background:${color}22;color:${color}">${pct}%</span><button class="goal-del" onclick="deleteGoalItem(${x.id})">✕</button></div><div class="goal-track"><div class="goal-bar-track"><div class="goal-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${color},${color}aa)"></div></div><span class="goal-val">${x.current}/${x.target}</span></div><div class="goal-controls"><button class="goal-ctrl" onclick="changeGoal(${x.id},-1)">−1</button><button class="goal-ctrl" onclick="changeGoal(${x.id},+1)">+1</button><button class="goal-ctrl" onclick="changeGoal(${x.id},+5)">+5</button><button class="goal-ctrl" onclick="changeGoal(${x.id},${x.target-x.current})" style="color:#22c55e">✓ Done</button></div></div>`;
         }).join('');
     }
     renderGoals();
@@ -1073,12 +968,7 @@
     function calNav(d){calMonth2+=d;if(calMonth2>11){calMonth2=0;calYear++;}if(calMonth2<0){calMonth2=11;calYear--;}renderCal();}
     function loadCalEvents(){return JSON.parse(localStorage.getItem('cal_events')||'{}');}
     function saveCalEvents(e){localStorage.setItem('cal_events',JSON.stringify(e));}
-    function renderCal(){document.getElementById('calMonth').textContent=`${MON_RU[calMonth2]} ${calYear}`;const first=new Date(calYear,calMonth2,1);const last=new Date(calYear,calMonth2+1,0);const startDay=(first.getDay()+6)%7;const today=new Date();const events=loadCalEvents();const grid=document.getElementById('calGrid');// Keep headers
-    const headers=Array.from(grid.querySelectorAll('.cal-day-head'));grid.innerHTML='';headers.forEach(h=>grid.appendChild(h.cloneNode(true)));
-    // Empty cells
-    for(let i=0;i<startDay;i++){const d=document.createElement('div');d.className='cal-day other-month';grid.appendChild(d);}
-    for(let day=1;day<=last.getDate();day++){const d=document.createElement('div');d.className='cal-day';const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth2&&today.getDate()===day;if(isToday)d.classList.add('today');const key=`${calYear}-${calMonth2+1}-${day}`;if(events[key]&&events[key].length)d.classList.add('has-event');if(calSelected===key)d.style.outline='2px solid var(--purple)';d.textContent=day;d.onclick=()=>selectCalDay(day);grid.appendChild(d);}
-    }
+    function renderCal(){document.getElementById('calMonth').textContent=`${MON_RU[calMonth2]} ${calYear}`;const first=new Date(calYear,calMonth2,1);const last=new Date(calYear,calMonth2+1,0);const startDay=(first.getDay()+6)%7;const today=new Date();const events=loadCalEvents();const grid=document.getElementById('calGrid');const headers=Array.from(grid.querySelectorAll('.cal-day-head'));grid.innerHTML='';headers.forEach(h=>grid.appendChild(h.cloneNode(true)));for(let i=0;i<startDay;i++){const d=document.createElement('div');d.className='cal-day other-month';grid.appendChild(d);}for(let day=1;day<=last.getDate();day++){const d=document.createElement('div');d.className='cal-day';const isToday=today.getFullYear()===calYear&&today.getMonth()===calMonth2&&today.getDate()===day;if(isToday)d.classList.add('today');const key=`${calYear}-${calMonth2+1}-${day}`;if(events[key]&&events[key].length)d.classList.add('has-event');if(calSelected===key)d.style.outline='2px solid var(--purple)';d.textContent=day;d.onclick=()=>selectCalDay(day);grid.appendChild(d);}}
     function selectCalDay(day){calSelected=`${calYear}-${calMonth2+1}-${day}`;renderCal();const d=new Date(calYear,calMonth2,day);document.getElementById('calSelectedLabel').textContent=`📅 ${d.toLocaleDateString('ru',{weekday:'long',day:'numeric',month:'long'})}`;document.getElementById('calAddForm').style.display='flex';renderCalEvents();}
     function renderCalEvents(){const events=loadCalEvents();const list=events[calSelected]||[];const el=document.getElementById('calEventsList');if(!list.length){el.innerHTML='<div style="color:var(--muted);font-size:.8rem;padding:8px">Нет событий</div>';return;}el.innerHTML=list.map((ev,i)=>`<div class="cal-event" style="background:${ev.color}18;border:1px solid ${ev.color}44"><div class="cal-event-dot" style="background:${ev.color}"></div><span style="flex:1;font-size:.8rem;font-weight:600">${esc(ev.title)}</span><button class="cal-event-del" onclick="deleteCalEvent(${i})">✕</button></div>`).join('');}
     function addCalEvent(){if(!calSelected)return;const t=document.getElementById('calEventTitle').value.trim();if(!t)return;const c=document.getElementById('calEventColor').value;const ev=loadCalEvents();if(!ev[calSelected])ev[calSelected]=[];ev[calSelected].push({title:t,color:c});saveCalEvents(ev);document.getElementById('calEventTitle').value='';renderCal();renderCalEvents();}
@@ -1091,26 +981,26 @@
     function openDrawer(){drawerOpen=true;document.getElementById('drawer').classList.add('open');document.getElementById('drawerOverlay').classList.add('open');document.getElementById('burgerBtn').classList.add('active');document.body.style.overflow='hidden';updateDrawerAnalytics();renderDrHabits();if(token){loadDrTasks();loadDrNotes();}}
     function closeDrawer(){drawerOpen=false;document.getElementById('drawer').classList.remove('open');document.getElementById('drawerOverlay').classList.remove('open');document.getElementById('burgerBtn').classList.remove('active');document.body.style.overflow='';}
     function switchDrawerTab(t){document.getElementById('tabProd').classList.toggle('active',t==='prod');document.getElementById('tabBrain').classList.toggle('active',t==='brain');document.getElementById('panelProd').classList.toggle('active',t==='prod');document.getElementById('panelBrain').classList.toggle('active',t==='brain');}
+
     async function updateDrawerAnalytics(){
         document.getElementById('anSessions').textContent=miniSessions;
-        if(token){
-            try {
-                const [tasks, habits] = await Promise.all([
-                    fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),
-                    loadHabits()
-                ]);
-                const tot=tasks.length,dn=tasks.filter(x=>x.completed).length,p=tot?Math.round(dn/tot*100):0;
-                document.getElementById('anTasks').textContent=tot;
-                document.getElementById('anDone').textContent=dn;
-                document.getElementById('pbTasks').style.width=p+'%';
-                document.getElementById('pbTasksVal').textContent=p+'%';
-                const done=habits.filter(x=>x.completedToday).length;
-                const pH=habits.length?Math.round(done/habits.length*100):0;
-                document.getElementById('anHabits').textContent=habits.length;
-                document.getElementById('pbHabits').style.width=pH+'%';
-                document.getElementById('pbHabitsVal').textContent=pH+'%';
-            } catch {}
-        }
+        if(!token)return;
+        try{
+            const[tasks,habits]=await Promise.all([
+                fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),
+                loadHabits()
+            ]);
+            const tot=tasks.length,dn=tasks.filter(x=>x.completed).length,p=tot?Math.round(dn/tot*100):0;
+            document.getElementById('anTasks').textContent=tot;
+            document.getElementById('anDone').textContent=dn;
+            document.getElementById('pbTasks').style.width=p+'%';
+            document.getElementById('pbTasksVal').textContent=p+'%';
+            const done=habits.filter(x=>x.completedToday).length;
+            const pH=habits.length?Math.round(done/habits.length*100):0;
+            document.getElementById('anHabits').textContent=habits.length;
+            document.getElementById('pbHabits').style.width=pH+'%';
+            document.getElementById('pbHabitsVal').textContent=pH+'%';
+        }catch{}
     }
 
     /* MINI TIMER */
@@ -1127,78 +1017,42 @@
     async function loadDrTasks(){if(!token)return;try{const t=await fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json());const el=document.getElementById('drTasksList');if(!t.length){el.innerHTML='<div style="text-align:center;padding:14px;color:var(--muted);font-size:.8rem">📋 Нет задач</div>';return;}el.innerHTML=t.slice(0,8).map(x=>`<div class="dr-task ${x.completed?'done-t':''}"><div class="dr-t-check" onclick="drComplete(${x.id})">${x.completed?'✓':''}</div><span style="flex:1">${esc(x.title)}</span></div>`).join('');}catch{}}
     async function drComplete(id){if(!token)return;try{await fetch(`${API}/tasks/${id}/complete`,{method:'PUT',headers:{'Authorization':'Bearer '+token}});loadDrTasks();loadTasks();updateDrawerAnalytics();logTask();}catch{}}
 
-    /* DRAWER HABITS */
-    async function loadHabits() {
-        if (!token) return [];
-        try {
-            return await fetch(`${API}/api/habits`, {
-                headers: {'Authorization':'Bearer '+token}
-            }).then(r => r.json());
-        } catch { return []; }
+    /* ══ HABITS — API ══ */
+    async function loadHabits(){
+        if(!token)return[];
+        try{return await fetch(`${API}/api/habits`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json());}
+        catch{return[];}
     }
-
-    function toggleDrHabitForm() {
-        const f = document.getElementById('drHabitForm');
-        f.style.display = f.style.display === 'flex' ? 'none' : 'flex';
-        if (f.style.display === 'flex') document.getElementById('drHabitInp').focus();
-    }
-
-    async function addDrHabit() {
-        const n = document.getElementById('drHabitInp').value.trim();
-        if (!n || !token) return;
-        try {
-            await fetch(`${API}/api/habits`, {
-                method: 'POST',
-                headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
-                body: JSON.stringify({title: n})
-            });
-            document.getElementById('drHabitInp').value = '';
-            document.getElementById('drHabitForm').style.display = 'none';
+    function toggleDrHabitForm(){const f=document.getElementById('drHabitForm');f.style.display=f.style.display==='flex'?'none':'flex';if(f.style.display==='flex')document.getElementById('drHabitInp').focus();}
+    async function addDrHabit(){
+        const n=document.getElementById('drHabitInp').value.trim();
+        if(!n||!token)return;
+        try{
+            await fetch(`${API}/api/habits`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({title:n})});
+            document.getElementById('drHabitInp').value='';
+            document.getElementById('drHabitForm').style.display='none';
             renderDrHabits();
-        } catch {}
+        }catch{}
     }
-
-    async function renderDrHabits() {
-        const el = document.getElementById('drHabitsList');
-        if (!token) {
-            el.innerHTML = '<div style="text-align:center;padding:10px;color:var(--muted);font-size:.8rem">🔐 Войдите чтобы увидеть привычки</div>';
-            return;
-        }
-        const h = await loadHabits();
-        if (!h.length) {
-            el.innerHTML = '<div style="text-align:center;padding:10px;color:var(--muted);font-size:.8rem">Нажми + чтобы добавить!</div>';
-            return;
-        }
-        el.innerHTML = h.map(x => `
-            <div class="dr-habit ${x.completedToday ? 'h-done' : ''}">
-                <div class="dr-h-check" onclick="toggleDrHabit(${x.id})">${x.completedToday ? '✓' : ''}</div>
-                <span class="dr-h-name">${esc(x.title)}</span>
-                <button class="dr-h-del" onclick="deleteDrHabit(${x.id})">✕</button>
-            </div>`).join('');
+    async function renderDrHabits(){
+        const el=document.getElementById('drHabitsList');
+        if(!token){el.innerHTML='<div style="text-align:center;padding:10px;color:var(--muted);font-size:.8rem">🔐 Войдите чтобы увидеть привычки</div>';return;}
+        const h=await loadHabits();
+        // Обновляем кэш для графика
+        window._habitsCache=h;
+        if(!h.length){el.innerHTML='<div style="text-align:center;padding:10px;color:var(--muted);font-size:.8rem">Нажми + чтобы добавить!</div>';return;}
+        el.innerHTML=h.map(x=>`<div class="dr-habit ${x.completedToday?'h-done':''}"><div class="dr-h-check" onclick="toggleDrHabit(${x.id})">${x.completedToday?'✓':''}</div><span class="dr-h-name">${esc(x.title)}</span><button class="dr-h-del" onclick="deleteDrHabit(${x.id})">✕</button></div>`).join('');
     }
-
-    async function toggleDrHabit(id) {
-        if (!token) return;
-        try {
-            await fetch(`${API}/api/habits/${id}/toggle`, {
-                method: 'PATCH',
-                headers: {'Authorization':'Bearer '+token}
-            });
-            renderDrHabits();
-            updateDrawerAnalytics();
-            drawChart();
-        } catch {}
+    async function toggleDrHabit(id){
+        if(!token)return;
+        try{
+            await fetch(`${API}/api/habits/${id}/toggle`,{method:'PATCH',headers:{'Authorization':'Bearer '+token}});
+            renderDrHabits();updateDrawerAnalytics();drawChart();
+        }catch{}
     }
-
-    async function deleteDrHabit(id) {
-        if (!token) return;
-        try {
-            await fetch(`${API}/api/habits/${id}`, {
-                method: 'DELETE',
-                headers: {'Authorization':'Bearer '+token}
-            });
-            renderDrHabits();
-        } catch {}
+    async function deleteDrHabit(id){
+        if(!token)return;
+        try{await fetch(`${API}/api/habits/${id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}});renderDrHabits();}catch{}
     }
     renderDrHabits();
 
@@ -1227,17 +1081,81 @@
     renderDrKb();
 
     /* ══ PROFILE ══ */
-    async function openProfile(){if(!token)return;document.getElementById('profileOverlay').classList.add('open');document.body.style.overflow='hidden';const h=await loadHabits();document.getElementById('pmStatHabits').textContent=h.length;try{const[p,t,n]=await Promise.all([fetch(`${API}/api/profile`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),fetch(`${API}/notes`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json())]);document.getElementById('pmHeaderName').textContent=p.username||me;document.getElementById('pmHeaderEmail').textContent=p.email||'';document.getElementById('pmProvider').textContent=p.provider==='GOOGLE'?'🌐 Google':'🔐 Локальный';const av=document.getElementById('pmAvatar');if(p.picture)av.innerHTML=`<img src="${esc(p.picture)}" alt="a">`;else av.textContent=(p.username||me||'А').charAt(0).toUpperCase();document.getElementById('pmNameInput').value=p.username||'';document.getElementById('pmBioInput').value=p.bio||'';document.getElementById('pmPicInput').value=p.picture||'';document.getElementById('pmStatTasks').textContent=t.length||0;document.getElementById('pmStatNotes').textContent=n.length||0;}catch{}}
+    async function openProfile(){
+        if(!token)return;
+        document.getElementById('profileOverlay').classList.add('open');
+        document.body.style.overflow='hidden';
+        const h=await loadHabits();
+        document.getElementById('pmStatHabits').textContent=h.length;
+        try{
+            const[p,t,n]=await Promise.all([
+                fetch(`${API}/api/profile`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),
+                fetch(`${API}/tasks`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json()),
+                fetch(`${API}/notes`,{headers:{'Authorization':'Bearer '+token}}).then(r=>r.json())
+            ]);
+            document.getElementById('pmHeaderName').textContent=p.username||me;
+            document.getElementById('pmHeaderEmail').textContent=p.email||'';
+            document.getElementById('pmProvider').textContent=p.provider==='GOOGLE'?'🌐 Google':'🔐 Локальный';
+            const av=document.getElementById('pmAvatar');
+            if(p.picture)av.innerHTML=`<img src="${esc(p.picture)}" alt="a">`;
+            else av.textContent=(p.username||me||'А').charAt(0).toUpperCase();
+            document.getElementById('pmNameInput').value=p.username||'';
+            document.getElementById('pmBioInput').value=p.bio||'';
+            document.getElementById('pmPicInput').value=p.picture||'';
+            document.getElementById('pmStatTasks').textContent=t.length||0;
+            document.getElementById('pmStatNotes').textContent=n.length||0;
+        }catch{}
+    }
     function closeProfile(){document.getElementById('profileOverlay').classList.remove('open');document.body.style.overflow='';}
     function closeProfileIfOutside(e){if(e.target===document.getElementById('profileOverlay'))closeProfile();}
-    async function saveProfile(){const u=document.getElementById('pmNameInput').value.trim();const b=document.getElementById('pmBioInput').value.trim();const pi=document.getElementById('pmPicInput').value.trim();try{const r=await fetch(`${API}/api/profile`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username:u,bio:b,picture:pi})});if(!r.ok)throw new Error();const d=await r.json();if(d.username){me=d.username;localStorage.setItem('k_user',me);}updateTopbar();document.getElementById('pmMsg').textContent='✅ Сохранено!';document.getElementById('pmMsg').className='pm-msg ok';setTimeout(()=>document.getElementById('pmMsg').textContent='',2500);}catch{document.getElementById('pmMsg').textContent='❌ Ошибка';document.getElementById('pmMsg').className='pm-msg err';}}
-    function updateTopbar(){const li=!!(token&&me);document.getElementById('tbUser').style.display=li?'flex':'none';document.getElementById('tbLoginBtn').style.display=li?'none':'block';document.getElementById('tbLogoutBtn').style.display=li?'block':'none';if(li){document.getElementById('tbName').textContent=me;const av=document.getElementById('tbAvatar');const pic=localStorage.getItem('k_picture');if(pic)av.innerHTML=`<img src="${esc(pic)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;else av.textContent=me.charAt(0).toUpperCase();}}
+    async function saveProfile(){
+        const u=document.getElementById('pmNameInput').value.trim();
+        const b=document.getElementById('pmBioInput').value.trim();
+        const pi=document.getElementById('pmPicInput').value.trim();
+        try{
+            const r=await fetch(`${API}/api/profile`,{method:'PUT',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({username:u,bio:b,picture:pi})});
+            if(!r.ok)throw new Error();
+            const d=await r.json();
+            if(d.username){me=d.username;localStorage.setItem('k_user',me);}
+            updateTopbar();
+            document.getElementById('pmMsg').textContent='✅ Сохранено!';
+            document.getElementById('pmMsg').className='pm-msg ok';
+            setTimeout(()=>document.getElementById('pmMsg').textContent='',2500);
+        }catch{document.getElementById('pmMsg').textContent='❌ Ошибка';document.getElementById('pmMsg').className='pm-msg err';}
+    }
+    function updateTopbar(){
+        const li=!!(token&&me);
+        document.getElementById('tbUser').style.display=li?'flex':'none';
+        document.getElementById('tbLoginBtn').style.display=li?'none':'block';
+        document.getElementById('tbLogoutBtn').style.display=li?'block':'none';
+        if(li){
+            document.getElementById('tbName').textContent=me;
+            const av=document.getElementById('tbAvatar');
+            const pic=localStorage.getItem('k_picture');
+            if(pic)av.innerHTML=`<img src="${esc(pic)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+            else av.textContent=me.charAt(0).toUpperCase();
+        }
+    }
 
     /* ══ AUTH + CHAT ══ */
     function toggleChat(){open=!open;document.getElementById('chat-widget').classList.toggle('open',open);if(open){document.getElementById('badge').style.display='none';if(token){loadTasks();loadNotes();}}}
     function switchAuth(t){document.querySelectorAll('.a-tab').forEach((b,i)=>b.classList.toggle('active',(t==='login'&&i===0)||(t==='register'&&i===1)));document.getElementById('login-form').classList.toggle('active',t==='login');document.getElementById('reg-form').classList.toggle('active',t==='register');setAmsg('');}
     async function doRegister(){const u=v('r-u'),p=v('r-p');if(!u||!p){setAmsg('Заполни все поля');return;}try{const r=await fetch(`${API}/auth/register?username=${enc(u)}&password=${enc(p)}`,{method:'POST'});r.ok?(setAmsg('✅ Готово! Теперь войди'),switchAuth('login')):setAmsg('❌ Ошибка');}catch{setAmsg('❌ Сервер не отвечает');}}
-    async function doLogin(){const u=v('l-u'),p=v('l-p');if(!u||!p){setAmsg('Заполни все поля');return;}try{const r=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});const txt=await r.text();if(r.ok&&txt&&txt!=='INVALID_CREDENTIALS'){token=txt;me=u;localStorage.setItem('k_token',token);localStorage.setItem('k_user',me);showMain();updateTopbar();if(drawerOpen){loadDrTasks();loadDrNotes();}}else setAmsg('❌ Неверный логин или пароль');}catch{setAmsg('❌ Сервер не отвечает');}}
+    async function doLogin(){
+        const u=v('l-u'),p=v('l-p');
+        if(!u||!p){setAmsg('Заполни все поля');return;}
+        try{
+            const r=await fetch(`${API}/auth/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+            const txt=await r.text();
+            if(r.ok&&txt&&txt!=='INVALID_CREDENTIALS'){
+                token=txt;me=u;
+                localStorage.setItem('k_token',token);
+                localStorage.setItem('k_user',me);
+                showMain();updateTopbar();
+                if(drawerOpen){loadDrTasks();loadDrNotes();}
+            }else setAmsg('❌ Неверный логин или пароль');
+        }catch{setAmsg('❌ Сервер не отвечает');}
+    }
     function showMain(){
         document.getElementById('auth-section').style.display='none';
         document.getElementById('main-section').style.display='flex';
@@ -1245,20 +1163,32 @@
         if(!document.getElementById('messages').children.length)addBotMsg(`Привет, ${me}! 👋 Я Kitty — твой ИИ-ассистент!`);
         loadTasks();
         loadNotes();
-        // Кешируем данные для графика
-        fetch(`${API}/api/mood`, {headers:{'Authorization':'Bearer '+token}})
+        // Загружаем данные из API и кэшируем для графика
+        fetch(`${API}/api/mood`,{headers:{'Authorization':'Bearer '+token}})
             .then(r=>r.json()).then(data=>{
-                const map = {};
-                data.forEach(e => map[new Date(e.date).toDateString()] = e.mood);
-                window._moodCache = map;
+                const map={};
+                data.forEach(e=>{ map[new Date(e.date).toDateString()]=e.mood; });
+                window._moodCache=map;
                 drawChart();
             }).catch(()=>{});
-        loadHabits().then(h => { window._habitsCache = h; drawChart(); });
+        loadHabits().then(h=>{window._habitsCache=h;drawChart();});
         renderMoodBars();
         renderGoals();
         renderDrHabits();
     }
-    function doLogout(){token=me=null;localStorage.removeItem('k_token');localStorage.removeItem('k_user');localStorage.removeItem('k_picture');document.getElementById('auth-section').style.display='flex';document.getElementById('main-section').style.display='none';document.getElementById('messages').innerHTML='';switchAuth('login');updateTopbar();closeProfile();}
+    function doLogout(){
+        token=me=null;
+        localStorage.removeItem('k_token');localStorage.removeItem('k_user');localStorage.removeItem('k_picture');
+        window._moodCache={};window._habitsCache=[];
+        document.getElementById('auth-section').style.display='flex';
+        document.getElementById('main-section').style.display='none';
+        document.getElementById('messages').innerHTML='';
+        document.getElementById('moodBars').innerHTML='';
+        document.getElementById('goalsList').innerHTML='';
+        document.getElementById('goalsEmpty').style.display='block';
+        document.getElementById('drHabitsList').innerHTML='';
+        switchAuth('login');updateTopbar();closeProfile();
+    }
     function setAmsg(t){document.getElementById('auth-msg').textContent=t;}
     function switchTab(tab){document.querySelectorAll('.t-btn').forEach((b,i)=>b.classList.toggle('active',['chat','tasks','notes','timer'][i]===tab));['chat','tasks','notes','timer'].forEach(t=>{document.getElementById(t+'-tab').style.display=t===tab?'flex':'none';});if(tab==='tasks')loadTasks();if(tab==='notes')loadNotes();}
     async function sendMsg(){const inp=document.getElementById('msg-in'),txt=inp.value.trim();if(!txt)return;addUserMsg(txt);inp.value='';const ty=addTyping();try{const r=await fetch(`${API}/chat/send?sender=${enc(me||'guest')}&message=${enc(txt)}`,{method:'POST',headers:token?{'Authorization':'Bearer '+token}:{}});const d=await r.json();ty.remove();addBotMsg(d.response||'...');}catch{ty.remove();addBotMsg('Сервер недоступен.');}}
