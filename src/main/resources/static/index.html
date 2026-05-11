@@ -1252,495 +1252,82 @@
     }
 
 /* ══════════════════════════════════════════════
-   SOUND GRID — Web Audio API  v3 (Ультра-уютная)
-   Заменяет блок "SOUND GRID" в index.html
+   SOUND GRID — MP3 Cloud Version
+   Заменяет блок синтезаторов на работу с файлами
 ══════════════════════════════════════════════ */
 
 const SOUND_PRESETS = [
-    { id: 'rain',   label: 'Дождь',   sym: '≋', col: '#60a5fa' },
-    { id: 'cafe',   label: 'Кафе',    sym: '♩', col: '#c084fc' },
-    { id: 'forest', label: 'Лес',     sym: '♣', col: '#4ade80' },
-    { id: 'storm',  label: 'Гроза',   sym: '⚡', col: '#818cf8' },
-    { id: 'night',  label: 'Ночь',    sym: '☾', col: '#a78bfa' }, // Заменили Часы на уютную Ночь
-    { id: 'fire',   label: 'Камин',   sym: '≈', col: '#fb923c' },
+    { id: 'rain',    label: 'Дождь',   sym: '≋', col: '#60a5fa', file: '/rain.mp3' },
+    { id: 'night',   label: 'Ночь',    sym: '☾', col: '#a78bfa', file: '/night.mp3' },
+    { id: 'thunder', label: 'Гроза',   sym: '⚡', col: '#818cf8', file: '/thunder.mp3' },
+    { id: 'sea',     label: 'Море',    sym: '🌊', col: '#2dd4bf', file: '/sea.mp3' },
+    { id: 'piano',   label: 'Пианино', sym: '🎹', col: '#c084fc', file: '/piano.mp3' },
+    { id: 'guitar',  label: 'Гитара',  sym: '🎸', col: '#fb923c', file: '/guitar.mp3' },
 ];
 
 const activeSounds = new Set();
+const soundNodes = {}; // Храним { audio, gain }
 let audioCtx = null;
-const soundNodes = {};
 let masterGain = null;
 
+// Инициализация звукового движка
 function getAudioCtx() {
     if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         masterGain = audioCtx.createGain();
-        masterGain.gain.value = 0.7;
+        masterGain.gain.value = 0.7; // громкость по умолчанию
         masterGain.connect(audioCtx.destination);
     }
     if (audioCtx.state === 'suspended') audioCtx.resume();
     return audioCtx;
 }
 
-/* ── Утилиты ───────────────────────────────── */
-
-function noiseBuffer(ctx, type = 'white') {
-    const len = ctx.sampleRate * 3;
-    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
-    const d = buf.getChannelData(0);
-    if (type === 'white') {
-        for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
-    } else { // brown
-        let last = 0;
-        for (let i = 0; i < len; i++) {
-            const w = Math.random() * 2 - 1;
-            d[i] = (last + 0.02 * w) / 1.02;
-            last = d[i];
-            d[i] *= 3.5;
-        }
-    }
-    return buf;
-}
-
-function noiseSrc(ctx, type = 'white') {
-    const s = ctx.createBufferSource();
-    s.buffer = noiseBuffer(ctx, type);
-    s.loop = true;
-    return s;
-}
-
-function schedule(fn, id, minMs, maxMs) {
-    const t = minMs + Math.random() * (maxMs - minMs);
-    return setTimeout(() => { if (activeSounds.has(id)) fn(); }, t);
-}
-
-/* ══════════════════════════════════════════════
-   1. ДОЖДЬ — тяжёлый ливень + редкий гром
-══════════════════════════════════════════════ */
-function buildRain(ctx, out) {
-    const heavy = noiseSrc(ctx, 'white');
-    const f1 = ctx.createBiquadFilter(); f1.type = 'bandpass'; f1.frequency.value = 900; f1.Q.value = 0.35;
-    const f2 = ctx.createBiquadFilter(); f2.type = 'bandpass'; f2.frequency.value = 2400; f2.Q.value = 0.5;
-    const g1 = ctx.createGain(); g1.gain.value = 0.45;
-    const g2 = ctx.createGain(); g2.gain.value = 0.22;
-    heavy.connect(f1); f1.connect(g1); g1.connect(out);
-    heavy.connect(f2); f2.connect(g2); g2.connect(out);
-    heavy.start();
-
-    const drips = noiseSrc(ctx, 'white');
-    const fglass = ctx.createBiquadFilter(); fglass.type = 'highpass'; fglass.frequency.value = 3500;
-    const gglass = ctx.createGain(); gglass.gain.value = 0.08;
-    drips.connect(fglass); fglass.connect(gglass); gglass.connect(out);
-    drips.start();
-
-    const masterG = ctx.createGain(); masterG.gain.value = 1; masterG.connect(out);
-
-    function thunder() {
-        const noise = noiseSrc(ctx, 'brown');
-        const filt = ctx.createBiquadFilter(); filt.type = 'lowpass'; filt.frequency.value = 120;
-        const env = ctx.createGain();
-        const now = ctx.currentTime;
-        env.gain.setValueAtTime(0, now);
-        env.gain.linearRampToValueAtTime(0.9, now + 0.15);
-        env.gain.exponentialRampToValueAtTime(0.3, now + 1.2);
-        env.gain.exponentialRampToValueAtTime(0.0001, now + 4.5);
-        noise.connect(filt); filt.connect(env); env.connect(masterG);
-        noise.start(); noise.stop(now + 5);
-        schedule(thunder, 'rain', 12000, 35000);
-    }
-    schedule(thunder, 'rain', 5000, 20000);
-
-    return { gain: masterG, nodes: [heavy, drips, f1, f2, g1, g2, fglass, gglass, masterG] };
-}
-
-/* ══════════════════════════════════════════════
-   2. КАФЕ — более живое, проезжающие авто, уют
-══════════════════════════════════════════════ */
-function buildCafe(ctx, out) {
-    const masterG = ctx.createGain(); masterG.gain.value = 1; masterG.connect(out);
-
-    // Гул толпы (теперь он "дышит" благодаря LFO)
-    const crowdG = ctx.createGain(); crowdG.gain.value = 0.08; crowdG.connect(masterG);
-    const crowdFilt = ctx.createBiquadFilter(); crowdFilt.type = 'lowpass'; crowdFilt.frequency.value = 400;
-    crowdFilt.connect(crowdG);
-
-    const crowdLFO = ctx.createOscillator(); crowdLFO.frequency.value = 0.05;
-    const crowdLFOG = ctx.createGain(); crowdLFOG.gain.value = 100;
-    crowdLFO.connect(crowdLFOG); crowdLFOG.connect(crowdFilt.frequency);
-    crowdLFO.start();
-
-    [180, 193, 208, 215, 224, 237].forEach(hz => {
-        const o = ctx.createOscillator();
-        o.type = 'sawtooth'; o.frequency.value = hz;
-        o.connect(crowdFilt); o.start();
-    });
-
-    // Фоновое тепло кафе
-    const bg = noiseSrc(ctx, 'brown');
-    const bgF = ctx.createBiquadFilter(); bgF.type = 'lowpass'; bgF.frequency.value = 550;
-    const bgG = ctx.createGain(); bgG.gain.value = 0.22;
-    bg.connect(bgF); bgF.connect(bgG); bgG.connect(masterG); bg.start();
-
-    // Проезжающие мимо машины (Город за окном)
-    function passingCar() {
-        const n = noiseSrc(ctx, 'brown');
-        const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 0.5;
-        const g = ctx.createGain();
-        const now = ctx.currentTime;
-        const dur = 4 + Math.random() * 3;
-
-        f.frequency.setValueAtTime(150, now);
-        f.frequency.linearRampToValueAtTime(700, now + dur/2);
-        f.frequency.linearRampToValueAtTime(150, now + dur);
-
-        g.gain.setValueAtTime(0, now);
-        g.gain.linearRampToValueAtTime(0.2, now + dur/2);
-        g.gain.linearRampToValueAtTime(0.0001, now + dur);
-
-        n.connect(f); f.connect(g); g.connect(masterG);
-        n.start(now); n.stop(now + dur);
-        schedule(passingCar, 'cafe', 6000, 15000);
-    }
-    schedule(passingCar, 'cafe', 2000, 5000);
-
-    // Звяканье посуды (стало чаще и выразительнее)
-    function clink() {
-        const freq = 1500 + Math.random() * 1500;
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.type = 'sine'; o.frequency.value = freq;
-        const now = ctx.currentTime;
-        g.gain.setValueAtTime(0.1 + Math.random() * 0.08, now);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.3 + Math.random() * 0.2);
-        o.connect(g); g.connect(masterG);
-        o.start(now); o.stop(now + 0.6);
-        schedule(clink, 'cafe', 800, 4000);
-    }
-    schedule(clink, 'cafe', 1000, 2000);
-
-    // Дверь / Колокольчик
-    function doorBell() {
-        const freq = 2000 + Math.random() * 200;
-        const o = ctx.createOscillator();
-        const g = ctx.createGain();
-        o.type = 'sine'; o.frequency.value = freq;
-        const now = ctx.currentTime;
-        g.gain.setValueAtTime(0.05, now);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + 1.5);
-        o.connect(g); g.connect(masterG);
-        o.start(now); o.stop(now + 2);
-        schedule(doorBell, 'cafe', 15000, 35000);
-    }
-    schedule(doorBell, 'cafe', 5000, 15000);
-
-    return { gain: masterG, nodes: [bg, bgF, bgG, crowdLFO, crowdLFOG, crowdG, crowdFilt, masterG] };
-}
-
-/* ══════════════════════════════════════════════
-   3. ЛЕС — живой, много травы и птиц
-══════════════════════════════════════════════ */
-function buildForest(ctx, out) {
-    const masterG = ctx.createGain(); masterG.gain.value = 1; masterG.connect(out);
-
-    // Ветер сквозь листья
-    const wind = noiseSrc(ctx, 'white');
-    const wF = ctx.createBiquadFilter(); wF.type = 'bandpass'; wF.frequency.value = 1100; wF.Q.value = 0.6;
-    const wG = ctx.createGain(); wG.gain.value = 0.25;
-    const lfo = ctx.createOscillator(); lfo.frequency.value = 0.15;
-    const lfoG = ctx.createGain(); lfoG.gain.value = 0.15;
-    lfo.connect(lfoG); lfoG.connect(wG.gain);
-    wind.connect(wF); wF.connect(wG); wG.connect(masterG);
-    wind.start(); lfo.start();
-
-    // Шуршание высокой травы
-    function grassRustle() {
-        const n = noiseSrc(ctx, 'white');
-        const f = ctx.createBiquadFilter(); f.type = 'bandpass';
-        f.frequency.value = 3500 + Math.random() * 2000; f.Q.value = 0.8;
-        const g = ctx.createGain();
-        const now = ctx.currentTime;
-        const dur = 0.8 + Math.random() * 2;
-
-        g.gain.setValueAtTime(0, now);
-        g.gain.linearRampToValueAtTime(0.12 + Math.random() * 0.08, now + dur * 0.4);
-        g.gain.linearRampToValueAtTime(0.0001, now + dur);
-
-        n.connect(f); f.connect(g); g.connect(masterG);
-        n.start(now); n.stop(now + dur);
-        schedule(grassRustle, 'forest', 1000, 3500);
-    }
-    schedule(grassRustle, 'forest', 500, 1500);
-
-    // Увеличенная библиотека птиц
-    const birdTypes = [
-        { freqs: [1320, 1540, 1320],        dur: 0.08, gap: 0.06, vol: 0.08 }, // быстрые
-        { freqs: [880, 1100, 880, 1100],     dur: 0.10, gap: 0.08, vol: 0.07 }, // синички
-        { freqs: [1760, 1540, 1320, 1540],   dur: 0.06, gap: 0.05, vol: 0.06 },
-        { freqs: [660, 880, 1100, 880, 660], dur: 0.12, gap: 0.10, vol: 0.10 }, // соловей
-        { freqs: [2200, 1980, 2200, 1760],   dur: 0.05, gap: 0.04, vol: 0.05 }, // стрёкот
-        { freqs: [3000, 2800],               dur: 0.04, gap: 0.04, vol: 0.04 }, // высокие
-    ];
-
-    function singBird(type) {
-        type.freqs.forEach((freq, i) => {
-            const o = ctx.createOscillator();
-            const g = ctx.createGain();
-            o.type = 'sine';
-            o.frequency.value = freq + (Math.random() - 0.5) * 50;
-            const t = ctx.currentTime + i * (type.dur + type.gap);
-            g.gain.setValueAtTime(0, t);
-            g.gain.linearRampToValueAtTime(type.vol, t + type.dur * 0.3);
-            g.gain.exponentialRampToValueAtTime(0.0001, t + type.dur * 1.2);
-            o.connect(g); g.connect(masterG);
-            o.start(t); o.stop(t + type.dur * 1.5);
-        });
-    }
-
-    // Птицы поют гораздо чаще
-    birdTypes.forEach((type, idx) => {
-        function repeat() {
-            if (!activeSounds.has('forest')) return;
-            singBird(type);
-            const interval = 800 + Math.random() * 2500;
-            setTimeout(repeat, interval);
-        }
-        setTimeout(repeat, Math.random() * 2000);
-    });
-
-    return { gain: masterG, nodes: [wind, wF, wG, lfo, lfoG, masterG] };
-}
-
-/* ══════════════════════════════════════════════
-   4. ГРОЗА
-══════════════════════════════════════════════ */
-function buildStorm(ctx, out) {
-    const rain = noiseSrc(ctx, 'white');
-    const rF = ctx.createBiquadFilter(); rF.type = 'bandpass'; rF.frequency.value = 1000; rF.Q.value = 0.3;
-    const rG = ctx.createGain(); rG.gain.value = 0.4;
-    rain.connect(rF); rF.connect(rG); rG.connect(out); rain.start();
-
-    const windN = noiseSrc(ctx, 'brown');
-    const windF = ctx.createBiquadFilter(); windF.type = 'lowpass'; windF.frequency.value = 200;
-    const windG = ctx.createGain(); windG.gain.value = 0;
-    windN.connect(windF); windF.connect(windG); windG.connect(out); windN.start();
-
-    const masterG = ctx.createGain(); masterG.gain.value = 1; masterG.connect(out);
-
-    function windGust() {
-        const now = ctx.currentTime;
-        const dur = 2 + Math.random() * 3;
-        windG.gain.setValueAtTime(windG.gain.value, now);
-        windG.gain.linearRampToValueAtTime(0.35 + Math.random() * 0.2, now + dur * 0.4);
-        windG.gain.linearRampToValueAtTime(0.05, now + dur);
-        schedule(windGust, 'storm', 3000, 9000);
-    }
-    schedule(windGust, 'storm', 1000, 4000);
-
-    function lightning() {
-        const crack = noiseSrc(ctx, 'white');
-        const cF = ctx.createBiquadFilter(); cF.type = 'highpass'; cF.frequency.value = 2000;
-        const cG = ctx.createGain();
-        const t0 = ctx.currentTime;
-        cG.gain.setValueAtTime(0.6, t0);
-        cG.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.08);
-        crack.connect(cF); cF.connect(cG); cG.connect(masterG);
-        crack.start(t0); crack.stop(t0 + 0.15);
-
-        const delay = 0.2 + Math.random() * 0.8;
-        const thunder = noiseSrc(ctx, 'brown');
-        const thF = ctx.createBiquadFilter(); thF.type = 'lowpass'; thF.frequency.value = 150;
-        const thG = ctx.createGain();
-        const t1 = t0 + delay;
-        thG.gain.setValueAtTime(0, t1);
-        thG.gain.linearRampToValueAtTime(1.1, t1 + 0.2);
-        thG.gain.exponentialRampToValueAtTime(0.4, t1 + 1.5);
-        thG.gain.exponentialRampToValueAtTime(0.0001, t1 + 5);
-        thunder.connect(thF); thF.connect(thG); thG.connect(masterG);
-        thunder.start(t1); thunder.stop(t1 + 6);
-
-        schedule(lightning, 'storm', 8000, 22000);
-    }
-    schedule(lightning, 'storm', 3000, 10000);
-
-    return { gain: masterG, nodes: [rain, rF, rG, windN, windF, windG, masterG] };
-}
-
-/* ══════════════════════════════════════════════
-   5. НОЧЬ — Сверчки и ночной бриз (Вместо Библиотеки)
-══════════════════════════════════════════════ */
-function buildNight(ctx, out) {
-    const masterG = ctx.createGain(); masterG.gain.value = 1; masterG.connect(out);
-
-    // Ночной ветерок
-    const wind = noiseSrc(ctx, 'brown');
-    const windF = ctx.createBiquadFilter(); windF.type = 'lowpass'; windF.frequency.value = 250;
-    const windG = ctx.createGain(); windG.gain.value = 0.15;
-    wind.connect(windF); windF.connect(windG); windG.connect(masterG); wind.start();
-
-    // Сверчки (амплитудная модуляция синусоиды для реалистичного стрекотания)
-    function cricket() {
-        const o = ctx.createOscillator();
-        const am = ctx.createOscillator();
-        const amGain = ctx.createGain();
-        const env = ctx.createGain();
-
-        // Высокая частота сверчка
-        o.type = 'sine'; o.frequency.value = 4500 + Math.random() * 400;
-        // Скорость "трения лапок"
-        am.type = 'square'; am.frequency.value = 40 + Math.random() * 10;
-
-        am.connect(amGain.gain);
-        amGain.gain.value = 0;
-        o.connect(amGain); amGain.connect(env); env.connect(masterG);
-
-        const now = ctx.currentTime;
-        // Паттерн стрекотания: 3 коротких импульса
-        env.gain.setValueAtTime(0, now);
-
-        // Чирп 1
-        env.gain.linearRampToValueAtTime(0.06, now + 0.02);
-        env.gain.setValueAtTime(0.06, now + 0.08);
-        env.gain.linearRampToValueAtTime(0, now + 0.1);
-
-        // Чирп 2
-        env.gain.setValueAtTime(0, now + 0.15);
-        env.gain.linearRampToValueAtTime(0.06, now + 0.17);
-        env.gain.setValueAtTime(0.06, now + 0.23);
-        env.gain.linearRampToValueAtTime(0, now + 0.25);
-
-        // Чирп 3
-        env.gain.setValueAtTime(0, now + 0.3);
-        env.gain.linearRampToValueAtTime(0.06, now + 0.32);
-        env.gain.setValueAtTime(0.06, now + 0.38);
-        env.gain.linearRampToValueAtTime(0, now + 0.4);
-
-        o.start(now); o.stop(now + 0.5);
-        am.start(now); am.stop(now + 0.5);
-
-        schedule(cricket, 'night', 1200, 3000);
-    }
-
-    // Запускаем несколько независимых сверчков в разных ритмах
-    schedule(cricket, 'night', 500, 1000);
-    schedule(cricket, 'night', 1500, 2500);
-
-    return { gain: masterG, nodes: [wind, windF, windG, masterG] };
-}
-
-/* ══════════════════════════════════════════════
-   6. КАМИН — сочный треск горящих поленьев
-══════════════════════════════════════════════ */
-function buildFire(ctx, out) {
-    const masterG = ctx.createGain(); masterG.gain.value = 1; masterG.connect(out);
-
-    // Основной гул огня
-    const fireNoise = noiseSrc(ctx, 'brown');
-    const fireF = ctx.createBiquadFilter(); fireF.type = 'lowpass'; fireF.frequency.value = 600;
-    const fireG = ctx.createGain(); fireG.gain.value = 0.45;
-
-    const flameLFO = ctx.createOscillator(); flameLFO.frequency.value = 1.2;
-    const flameLFOG = ctx.createGain(); flameLFOG.gain.value = 0.15;
-    flameLFO.connect(flameLFOG); flameLFOG.connect(fireG.gain);
-
-    fireNoise.connect(fireF); fireF.connect(fireG); fireG.connect(masterG);
-    fireNoise.start(); flameLFO.start();
-
-    // Постоянное легкое шипение
-    const hissNoise = noiseSrc(ctx, 'white');
-    const hissF = ctx.createBiquadFilter(); hissF.type = 'bandpass'; hissF.frequency.value = 2500; hissF.Q.value = 1.2;
-    const hissG = ctx.createGain(); hissG.gain.value = 0.08;
-    hissNoise.connect(hissF); hissF.connect(hissG); hissG.connect(masterG); hissNoise.start();
-
-    // ТРЕСК БРЕВНА (Резкий и реалистичный: щелчок + хлопок уголька)
-    function woodCrack() {
-        const now = ctx.currentTime;
-
-        // 1. Резкий треск (ветка ломается)
-        const snap = noiseSrc(ctx, 'white');
-        const snapF = ctx.createBiquadFilter(); snapF.type = 'highpass'; snapF.frequency.value = 3500;
-        const snapG = ctx.createGain();
-        snapG.gain.setValueAtTime(0.9, now);
-        snapG.gain.exponentialRampToValueAtTime(0.0001, now + 0.06);
-        snap.connect(snapF); snapF.connect(snapG); snapG.connect(masterG);
-        snap.start(now); snap.stop(now + 0.1);
-
-        // 2. Пустотный хлопок (уголек лопается - быстрый питч даун)
-        const pop = ctx.createOscillator();
-        const popG = ctx.createGain();
-        pop.type = 'sine';
-        pop.frequency.setValueAtTime(600 + Math.random() * 400, now);
-        pop.frequency.exponentialRampToValueAtTime(100, now + 0.07);
-        popG.gain.setValueAtTime(0.5, now);
-        popG.gain.exponentialRampToValueAtTime(0.0001, now + 0.08);
-        pop.connect(popG); popG.connect(masterG);
-        pop.start(now); pop.stop(now + 0.15);
-
-        // Иногда двойной щелчок
-        if (Math.random() > 0.5) {
-            const t2 = now + 0.05 + Math.random() * 0.05;
-            const snap2 = noiseSrc(ctx, 'white');
-            const s2F = ctx.createBiquadFilter(); s2F.type = 'highpass'; s2F.frequency.value = 4000;
-            const s2G = ctx.createGain();
-            s2G.gain.setValueAtTime(0.5, t2);
-            s2G.gain.exponentialRampToValueAtTime(0.0001, t2 + 0.04);
-            snap2.connect(s2F); s2F.connect(s2G); s2G.connect(masterG);
-            snap2.start(t2); snap2.stop(t2 + 0.1);
-        }
-
-        schedule(woodCrack, 'fire', 600, 2500); // Трещит чаще!
-    }
-
-    // Мелкие искорки
-    function tinyCrackle() {
-        const now = ctx.currentTime;
-        const n = noiseSrc(ctx, 'white');
-        const f = ctx.createBiquadFilter(); f.type = 'bandpass';
-        f.frequency.value = 2000 + Math.random() * 1000; f.Q.value = 5;
-        const g = ctx.createGain();
-        g.gain.setValueAtTime(0.08 + Math.random() * 0.06, now);
-        g.gain.exponentialRampToValueAtTime(0.0001, now + 0.04 + Math.random() * 0.03);
-        n.connect(f); f.connect(g); g.connect(masterG);
-        n.start(now); n.stop(now + 0.1);
-        schedule(tinyCrackle, 'fire', 100, 400);
-    }
-
-    schedule(woodCrack, 'fire', 500, 1500);
-    schedule(tinyCrackle, 'fire', 100, 300);
-
-    return { gain: masterG, nodes: [fireNoise, fireF, fireG, flameLFO, flameLFOG, hissNoise, hissF, hissG, masterG] };
-}
-
-/* ══════════════════════════════════════════════
-   Диспетчер
-══════════════════════════════════════════════ */
-const BUILDERS = {
-    rain:   buildRain,
-    cafe:   buildCafe,
-    forest: buildForest,
-    storm:  buildStorm,
-    night:  buildNight, // Изменено с lib на night
-    fire:   buildFire,
-};
+/* ── Логика управления файлами ──────────────── */
 
 function toggleSound(id) {
     const ctx = getAudioCtx();
+    const preset = SOUND_PRESETS.find(s => s.id === id);
+
     if (activeSounds.has(id)) {
+        // --- ВЫКЛЮЧЕНИЕ ---
         activeSounds.delete(id);
         if (soundNodes[id]) {
-            const { gain } = soundNodes[id];
+            const { audio, gain } = soundNodes[id];
+            // Плавное затухание за 0.6 сек
             gain.gain.setTargetAtTime(0, ctx.currentTime, 0.15);
             setTimeout(() => {
-                soundNodes[id].nodes.forEach(n => { try { n.stop?.(); n.disconnect?.(); } catch {} });
-                delete soundNodes[id];
-            }, 600);
+                if (!activeSounds.has(id)) audio.pause();
+            }, 700);
         }
     } else {
+        // --- ВКЛЮЧЕНИЕ ---
         activeSounds.add(id);
-        soundNodes[id] = BUILDERS[id](ctx, masterGain);
-        const g = soundNodes[id].gain;
-        const target = g.gain.value || 0.5;
-        g.gain.setValueAtTime(0, ctx.currentTime);
-        g.gain.setTargetAtTime(target, ctx.currentTime, 0.4);
+
+        if (!soundNodes[id]) {
+            // Создаем аудио-элемент, если его еще нет
+            const audio = new Audio(preset.file);
+            audio.loop = true;
+            audio.crossOrigin = "anonymous";
+
+            // Прокидываем через Web Audio API для плавных фейдов
+            const source = ctx.createMediaElementSource(audio);
+            const gainNode = ctx.createGain();
+
+            source.connect(gainNode);
+            gainNode.connect(masterGain);
+
+            soundNodes[id] = { audio, gain: gainNode };
+        }
+
+        const { audio, gain } = soundNodes[id];
+
+        // Сбрасываем громкость в 0 и плавно поднимаем
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.setTargetAtTime(1, ctx.currentTime, 0.4);
+
+        audio.play().catch(e => console.warn("Нужен клик для запуска аудио"));
     }
+
     renderSoundGrid();
     syncVolumeSlider();
 }
@@ -1751,7 +1338,7 @@ function syncVolumeSlider() {
 }
 
 /* ══════════════════════════════════════════════
-   Рендер грида
+   Рендер интерфейса (UI)
 ══════════════════════════════════════════════ */
 function renderSoundGrid() {
     const grid = document.getElementById('soundGrid');
@@ -1774,24 +1361,30 @@ function renderSoundGrid() {
         </div>`;
     }).join('');
 
+    // Управление плашкой "Сейчас играет"
     const nb = document.getElementById('studyNowBar');
     const vb = document.getElementById('studyVolBox');
-    if (activeSounds.size > 0) {
-        nb.classList.remove('hidden');
-        vb.classList.remove('hidden');
-        document.getElementById('nowTxt').textContent =
-            'Играет: ' + [...activeSounds]
-                .map(id => SOUND_PRESETS.find(s => s.id === id)?.label)
-                .filter(Boolean).join(' + ');
 
-        const slider = vb.querySelector('input[type=range]');
-        if (slider) slider.oninput = function () {
-            document.getElementById('volVal').textContent = this.value + '%';
-            if (masterGain) masterGain.gain.value = this.value / 100;
-        };
+    if (activeSounds.size > 0) {
+        nb?.classList.remove('hidden');
+        vb?.classList.remove('hidden');
+        const names = [...activeSounds]
+            .map(id => SOUND_PRESETS.find(s => s.id === id)?.label)
+            .filter(Boolean).join(' + ');
+
+        const nowTxt = document.getElementById('nowTxt');
+        if (nowTxt) nowTxt.textContent = 'Играет: ' + names;
+
+        const slider = vb?.querySelector('input[type=range]');
+        if (slider) {
+            slider.oninput = function () {
+                document.getElementById('volVal').textContent = this.value + '%';
+                if (masterGain) masterGain.gain.value = this.value / 100;
+            };
+        }
     } else {
-        nb.classList.add('hidden');
-        vb.classList.add('hidden');
+        nb?.classList.add('hidden');
+        vb?.classList.add('hidden');
     }
 }
 
