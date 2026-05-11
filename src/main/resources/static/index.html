@@ -1256,6 +1256,11 @@
    Заменяет блок синтезаторов на работу с файлами
 ══════════════════════════════════════════════ */
 
+<section class="sound-grid" id="soundGrid">
+    </section>
+
+<script>
+// 1. Конфигурация звуков (проверь, чтобы имена файлов совпадали с image_2774fa.png)
 const SOUND_PRESETS = [
     { id: 'rain',    label: 'Дождь',   sym: '≋', col: '#60a5fa', file: '/rain.mp3' },
     { id: 'night',   label: 'Ночь',    sym: '☾', col: '#a78bfa', file: '/night.mp3' },
@@ -1265,128 +1270,79 @@ const SOUND_PRESETS = [
     { id: 'guitar',  label: 'Гитара',  sym: '🎸', col: '#fb923c', file: '/guitar.mp3' },
 ];
 
-const activeSounds = new Set();
-const soundNodes = {}; // Храним { audio, gain }
-let audioCtx = null;
-let masterGain = null;
+let currentAudio = null;
+let activeBtn = null;
 
-// Инициализация звукового движка
-function getAudioCtx() {
-    if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        masterGain = audioCtx.createGain();
-        masterGain.gain.value = 0.7; // громкость по умолчанию
-        masterGain.connect(audioCtx.destination);
-    }
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    return audioCtx;
-}
+// 2. Генерация кнопок
+const grid = document.getElementById('soundGrid');
+SOUND_PRESETS.forEach(preset => {
+    const btn = document.createElement('button');
+    btn.className = 'sound-card';
+    btn.innerHTML = `
+        <div class="sound-icon" style="background: ${preset.col}20; color: ${preset.col}">${preset.sym}</div>
+        <div class="sound-info">
+            <div class="sound-label">${preset.label}</div>
+            <div class="sound-status">Нажми, чтобы включить</div>
+        </div>
+    `;
 
-/* ── Логика управления файлами ──────────────── */
+    btn.onclick = () => toggleSound(preset, btn);
+    grid.appendChild(btn);
+});
 
-function toggleSound(id) {
-    const ctx = getAudioCtx();
-    const preset = SOUND_PRESETS.find(s => s.id === id);
-
-    if (activeSounds.has(id)) {
-        // --- ВЫКЛЮЧЕНИЕ ---
-        activeSounds.delete(id);
-        if (soundNodes[id]) {
-            const { audio, gain } = soundNodes[id];
-            // Плавное затухание за 0.6 сек
-            gain.gain.setTargetAtTime(0, ctx.currentTime, 0.15);
-            setTimeout(() => {
-                if (!activeSounds.has(id)) audio.pause();
-            }, 700);
-        }
-    } else {
-        // --- ВКЛЮЧЕНИЕ ---
-        activeSounds.add(id);
-
-        if (!soundNodes[id]) {
-            // Создаем аудио-элемент, если его еще нет
-            const audio = new Audio(preset.file);
-            audio.loop = true;
-            audio.crossOrigin = "anonymous";
-
-            // Прокидываем через Web Audio API для плавных фейдов
-            const source = ctx.createMediaElementSource(audio);
-            const gainNode = ctx.createGain();
-
-            source.connect(gainNode);
-            gainNode.connect(masterGain);
-
-            soundNodes[id] = { audio, gain: gainNode };
-        }
-
-        const { audio, gain } = soundNodes[id];
-
-        // Сбрасываем громкость в 0 и плавно поднимаем
-        gain.gain.setValueAtTime(0, ctx.currentTime);
-        gain.gain.setTargetAtTime(1, ctx.currentTime, 0.4);
-
-        audio.play().catch(e => console.warn("Нужен клик для запуска аудио"));
+// 3. Умная функция воспроизведения
+function toggleSound(preset, btn) {
+    // Если нажали на ту же кнопку, которая уже играет — выключаем
+    if (currentAudio && currentAudio.src.includes(preset.file)) {
+        stopAll();
+        return;
     }
 
-    renderSoundGrid();
-    syncVolumeSlider();
+    // Останавливаем старый звук перед запуском нового
+    stopAll();
+
+    // Создаем новый объект аудио
+    currentAudio = new Audio(preset.file);
+    currentAudio.loop = true;
+
+    // Пытаемся запустить
+    currentAudio.play()
+        .then(() => {
+            btn.classList.add('active');
+            btn.querySelector('.sound-status').innerText = 'Играет';
+            activeBtn = btn;
+        })
+        .catch(error => {
+            console.error("Ошибка воспроизведения:", error);
+            alert("Пожалуйста, сначала кликните в любом месте экрана, чтобы разрешить браузеру играть звук.");
+        });
 }
 
-function syncVolumeSlider() {
-    const slider = document.querySelector('#studyVolBox input[type=range]');
-    if (slider && masterGain) masterGain.gain.value = slider.value / 100;
-}
-
-/* ══════════════════════════════════════════════
-   Рендер интерфейса (UI)
-══════════════════════════════════════════════ */
-function renderSoundGrid() {
-    const grid = document.getElementById('soundGrid');
-    if (!grid) return;
-
-    grid.innerHTML = SOUND_PRESETS.map(s => {
-        const on = activeSounds.has(s.id);
-        const bars = on
-            ? `<div class="snd-eq">${[4, 7, 11, 7, 4].map((h, i) =>
-                `<div class="eq-b" style="height:${h}px;background:${s.col};` +
-                `animation:eq${i} ${0.55 + i * 0.1}s ease-in-out infinite alternate;` +
-                `animation-delay:${i * 0.07}s"></div>`
-              ).join('')}</div>`
-            : '';
-
-        return `<div class="snd-card${on ? ' on' : ''}" style="--snd-col:${s.col}" onclick="toggleSound('${s.id}')">
-            <span class="snd-sym" style="color:${on ? s.col : '#6b5e8a'}">${s.sym}</span>
-            <span class="snd-lbl">${s.label}</span>
-            ${bars}
-        </div>`;
-    }).join('');
-
-    // Управление плашкой "Сейчас играет"
-    const nb = document.getElementById('studyNowBar');
-    const vb = document.getElementById('studyVolBox');
-
-    if (activeSounds.size > 0) {
-        nb?.classList.remove('hidden');
-        vb?.classList.remove('hidden');
-        const names = [...activeSounds]
-            .map(id => SOUND_PRESETS.find(s => s.id === id)?.label)
-            .filter(Boolean).join(' + ');
-
-        const nowTxt = document.getElementById('nowTxt');
-        if (nowTxt) nowTxt.textContent = 'Играет: ' + names;
-
-        const slider = vb?.querySelector('input[type=range]');
-        if (slider) {
-            slider.oninput = function () {
-                document.getElementById('volVal').textContent = this.value + '%';
-                if (masterGain) masterGain.gain.value = this.value / 100;
-            };
-        }
-    } else {
-        nb?.classList.add('hidden');
-        vb?.classList.add('hidden');
+function stopAll() {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+    }
+    if (activeBtn) {
+        activeBtn.classList.remove('active');
+        activeBtn.querySelector('.sound-status').innerText = 'Нажми, чтобы включить';
+        activeBtn = null;
     }
 }
+</script>
+
+<style>
+    /* Добавь это в стили, чтобы видеть активную кнопку */
+    .sound-card.active {
+        border: 2px solid #60a5fa;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .sound-status {
+        font-size: 0.75rem;
+        opacity: 0.6;
+    }
+</style>
 
     /* --- FOCUS SESSION --- */
     let focusActive=false,focusSessCount=0,focusStartTime=null,focusTotalMins=0;
