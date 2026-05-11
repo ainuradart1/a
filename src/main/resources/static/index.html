@@ -403,6 +403,189 @@
         .logout-btn:hover{text-decoration:underline;}
         @media(max-width:900px){.dash-row{grid-template-columns:1fr 1fr!important;}}
         @media(max-width:600px){.dash-row{grid-template-columns:1fr!important;}.dashboard{padding:14px 14px 140px;}#chat-widget{width:calc(100vw - 16px);right:8px;}.drawer{width:100vw;}}
+            /* ── Study section wrapper ── */
+.study-section {
+  position: relative;
+  z-index: 1;
+  padding: 28px 32px 120px;
+  max-width: 1360px;
+  margin: 0 auto;
+}
+
+/* ── Study top nav ── */
+.study-nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 6px;
+  box-shadow: 0 2px 16px rgba(107,63,160,.07);
+  margin-bottom: 24px;
+}
+.study-nav button {
+  padding: 10px 20px;
+  border-radius: 14px;
+  border: none;
+  background: transparent;
+  font: 600 15px 'Outfit', sans-serif;
+  color: #6e7681;
+  cursor: pointer;
+  transition: all .2s;
+}
+.study-nav button.active {
+  background: #f4f0ff;
+  color: #8c52ff;
+}
+.study-nav button:hover:not(.active) {
+  background: #f8f9fa;
+}
+
+/* ── Study grid ── */
+.study-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── Panels ── */
+.study-panel {
+  background: #fff;
+  border: 1.5px solid var(--border);
+  border-radius: 24px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.03);
+}
+.study-panel h2 {
+  margin: 0 0 20px;
+  font-size: 20px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Pomodoro Timer ── */
+.timer-container {
+  text-align: center;
+  padding: 10px 0;
+}
+.timer-circle {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  margin: 0 auto 20px;
+}
+.timer-circle svg {
+  transform: rotate(-90deg);
+  width: 180px;
+  height: 180px;
+}
+.timer-circle circle {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+.timer-bg { stroke: #f0ebff; }
+.timer-progress {
+  stroke: url(#timer-grad);
+  stroke-dasharray: 502;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear;
+}
+.timer-display {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font: 800 36px 'Outfit', sans-serif;
+  color: #2d3436;
+}
+.timer-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+.timer-btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .2s;
+}
+.start-btn { background: #8c52ff; color: #fff; }
+.reset-btn { background: #f1f2f6; color: #5f27cd; }
+
+/* ── Quick Notes & Tasks ── */
+.study-input-group {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.study-input-group input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1.5px solid var(--border);
+  outline: none;
+}
+.study-input-group button {
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  background: #8c52ff;
+  color: #fff;
+  cursor: pointer;
+}
+.task-list, .note-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.task-item, .note-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid #f1f2f6;
+}
+.task-item:last-child { border: none; }
+.task-item input[type="checkbox"] {
+  width: 18px; height: 18px;
+  cursor: pointer;
+}
+
+/* ── Calendar / Chart area ── */
+.chart-container {
+  height: 160px;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  padding-top: 20px;
+}
+.chart-bar {
+  flex: 1;
+  background: #f0ebff;
+  border-radius: 6px 6px 0 0;
+  position: relative;
+  min-height: 4px;
+}
+.chart-bar.active { background: #8c52ff; }
+.chart-label {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: #b2bec3;
+}
+
+@media (max-width: 992px) {
+  .study-grid { grid-template-columns: 1fr; }
+}
+
     </style>
 </head>
 <body>
@@ -1221,6 +1404,138 @@
     function esc(s){const d=document.createElement('div');d.appendChild(document.createTextNode(s));return d.innerHTML;}
     function ts(){return new Date().toLocaleTimeString('ru',{hour:'2-digit',minute:'2-digit'});}
     setTimeout(()=>{if(!open)document.getElementById('badge').style.display='flex';},2500);
+    <svg style="width:0;height:0;position:absolute;">
+    <defs>
+      <linearGradient id="timer-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#8c52ff" />
+        <stop offset="100%" stop-color="#5f27cd" />
+      </linearGradient>
+    </defs>
+  </svg>
+
+  <section class="study-section" id="study">
+    <nav class="study-nav">
+      <button class="active">Дашборд</button>
+      <button>Расписание</button>
+      <button>Материалы</button>
+      <button>Архив</button>
+    </nav>
+
+    <div class="study-grid">
+      <div class="study-left">
+        <div class="study-panel" style="margin-bottom: 24px;">
+          <h2>🎯 Текущие задачи</h2>
+          <div class="study-input-group">
+            <input type="text" id="task-input" placeholder="Что нужно сделать?">
+            <button onclick="addTask()">＋</button>
+          </div>
+          <ul class="task-list" id="task-list"></ul>
+        </div>
+
+        <div class="study-panel">
+          <h2>📝 Быстрые заметки</h2>
+          <div class="study-input-group">
+            <input type="text" id="note-input" placeholder="Важная мысль...">
+            <button onclick="addNote()">＋</button>
+          </div>
+          <div class="note-list" id="note-list"></div>
+        </div>
+      </div>
+
+      <div class="study-right">
+        <div class="study-panel" style="margin-bottom: 24px;">
+          <h2>⏲️ Помодоро</h2>
+          <div class="timer-container">
+            <div class="timer-circle">
+              <svg>
+                <circle class="timer-bg" cx="90" cy="90" r="80"></circle>
+                <circle class="timer-progress" id="ring" cx="90" cy="90" r="80"></circle>
+              </svg>
+              <div class="timer-display" id="timer-display">25:00</div>
+            </div>
+            <div class="timer-controls">
+              <button class="timer-btn start-btn" id="start-btn" onclick="toggleTimer()"> ▶  Старт</button>
+              <button class="timer-btn reset-btn" onclick="resetTimer()">🔄</button>
+            </div>
+            <p style="margin-top:15px; font-size:13px; color:#636e72;">Сессий сегодня: <span id="sessions" style="font-weight:700;">0</span></p>
+          </div>
+        </div>
+
+        <div class="study-panel">
+          <h2>📊 Активность</h2>
+          <div class="chart-container" id="activity-chart">
+            </div>
+          <p style="text-align:center; font-size:12px; color:#b2bec3; margin-top:30px;">Прогресс за последние 7 дней</p>
+        </div>
+      </div>
+    </div>
+  </section>
 </script>
+<svg style="width:0;height:0;position:absolute;">
+    <defs>
+        <linearGradient id="timer-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#8c52ff" />
+            <stop offset="100%" stop-color="#5f27cd" />
+        </linearGradient>
+    </defs>
+</svg>
+
+<section class="study-section" id="study">
+    <nav class="study-nav">
+        <button class="active">Дашборд</button>
+        <button>Расписание</button>
+        <button>Материалы</button>
+        <button>Архив</button>
+    </nav>
+
+    <div class="study-grid">
+        <div class="study-left">
+            <div class="study-panel" style="margin-bottom: 24px;">
+                <h2>🎯 Текущие задачи</h2>
+                <div class="study-input-group">
+                    <input type="text" id="task-input" placeholder="Что нужно сделать?">
+                    <button onclick="addTask()">＋</button>
+                </div>
+                <ul class="task-list" id="task-list"></ul>
+            </div>
+
+            <div class="study-panel">
+                <h2>📝 Быстрые заметки</h2>
+                <div class="study-input-group">
+                    <input type="text" id="note-input" placeholder="Важная мысль...">
+                    <button onclick="addNote()">＋</button>
+                </div>
+                <div class="note-list" id="note-list"></div>
+            </div>
+        </div>
+
+        <div class="study-right">
+            <div class="study-panel" style="margin-bottom: 24px;">
+                <h2>⏲️ Помодоро</h2>
+                <div class="timer-container">
+                    <div class="timer-circle">
+                        <svg>
+                            <circle class="timer-bg" cx="90" cy="90" r="80"></circle>
+                            <circle class="timer-progress" id="ring" cx="90" cy="90" r="80"></circle>
+                        </svg>
+                        <div class="timer-display" id="timer-display">25:00</div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="timer-btn start-btn" id="start-btn" onclick="toggleTimer()"> ▶  Старт</button>
+                        <button class="timer-btn reset-btn" onclick="resetTimer()">🔄</button>
+                    </div>
+                    <p style="margin-top:15px; font-size:13px; color:#636e72;">Сессий сегодня: <span id="sessions" style="font-weight:700;">0</span></p>
+                </div>
+            </div>
+
+            <div class="study-panel">
+                <h2>📊 Активность</h2>
+                <div class="chart-container" id="activity-chart">
+                </div>
+                <p style="text-align:center; font-size:12px; color:#b2bec3; margin-top:30px;">Прогресс за последние 7 дней</p>
+            </div>
+        </div>
+    </div>
+</section>
 </body>
 </html>
