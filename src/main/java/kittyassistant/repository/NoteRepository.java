@@ -7,10 +7,6 @@ import java.util.List;
 
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
-
-    // Старый метод — оставим на случай если где-то используется
     List<Note> findByAuthorOrderByCreatedAtDesc(String author);
-
-    // Новый метод — по userId
     List<Note> findByUserIdOrderByCreatedAtDesc(Long userId);
 }

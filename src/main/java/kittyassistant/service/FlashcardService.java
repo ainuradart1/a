@@ -45,8 +45,6 @@ public class FlashcardService {
         f.setNextReview(LocalDate.now());
         return repo.save(f);
     }
-
-    /** Простой SRS: EASY +3 дня, MEDIUM +1 день, HARD — сегодня */
     public Flashcard review(Long id, FlashcardReviewRequest req, String username) {
         User user = getUser(username);
         Flashcard f = repo.findById(id).orElseThrow();

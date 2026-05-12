@@ -19,8 +19,6 @@ public class NoteService {
         this.repo = repo;
         this.userRepository = userRepository;
     }
-
-    // Найти пользователя по username или email
     private User getUser(String username) {
         return userRepository.findByUsername(username)
                 .orElseGet(() -> userRepository.findByEmail(username)
@@ -28,7 +26,6 @@ public class NoteService {
                                 new UsernameNotFoundException("User not found: " + username)));
     }
 
-    // Создать заметку — автор берётся из токена, не из тела запроса
     public Note create(String username, String title, String content) {
         User user = getUser(username);
 
@@ -43,13 +40,11 @@ public class NoteService {
         return repo.save(note);
     }
 
-    // Только заметки текущего пользователя
     public List<Note> getByUser(String username) {
         User user = getUser(username);
         return repo.findByUserIdOrderByCreatedAtDesc(user.getId());
     }
 
-    // Удалить — только свою заметку
     public void delete(Long id, String username) {
         User user = getUser(username);
         Note note = repo.findById(id).orElseThrow();

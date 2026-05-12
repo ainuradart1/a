@@ -18,7 +18,6 @@ public class TaskController {
         this.service = service;
     }
 
-    // Создать задачу
     @PostMapping
     public ResponseEntity<Task> create(
             @RequestBody Task t,
@@ -27,7 +26,6 @@ public class TaskController {
                 service.create(t, userDetails.getUsername()));
     }
 
-    // Получить все задачи текущего пользователя
     @GetMapping
     public ResponseEntity<List<Task>> getAll(
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -35,7 +33,6 @@ public class TaskController {
                 service.getAll(userDetails.getUsername()));
     }
 
-    // Отметить как выполненную
     @PutMapping("/{id}/complete")
     public ResponseEntity<Task> complete(
             @PathVariable Long id,
@@ -43,8 +40,6 @@ public class TaskController {
         return ResponseEntity.ok(
                 service.complete(id, userDetails.getUsername()));
     }
-
-    // Удалить задачу
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id,

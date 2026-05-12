@@ -16,8 +16,6 @@ public class JwtService {
     private Key getKey() {
         return Keys.hmacShaKeyFor(SECRET.getBytes());
     }
-
-    // Для обычного входа — передаём username
     public String generateToken(String username) {
         return Jwts.builder()
                 .subject(username)
@@ -26,8 +24,6 @@ public class JwtService {
                 .signWith(getKey())
                 .compact();
     }
-
-    // Читаем токен
     public String extractUsername(String token) {
         return Jwts.parser()
                 .verifyWith((javax.crypto.SecretKey) getKey())

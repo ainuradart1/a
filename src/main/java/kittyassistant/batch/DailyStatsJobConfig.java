@@ -52,7 +52,6 @@ public class DailyStatsJobConfig {
                 .build();
     }
 
-    // Запуск каждую ночь в 00:05
     @Scheduled(cron = "0 5 0 * * *")
     public void runNightly() {
         try {

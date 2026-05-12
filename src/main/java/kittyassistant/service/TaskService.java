@@ -19,7 +19,6 @@ public class TaskService {
         this.userRepository = userRepository;
     }
 
-    // Найти пользователя по username или email
     private User getUser(String username) {
         return userRepository.findByUsername(username)
                 .orElseGet(() -> userRepository.findByEmail(username)
@@ -27,7 +26,6 @@ public class TaskService {
                                 new UsernameNotFoundException("User not found: " + username)));
     }
 
-    // Создать задачу — привязать к пользователю
     public Task create(Task t, String username) {
         User user = getUser(username);
         t.setUserId(user.getId());
@@ -35,18 +33,15 @@ public class TaskService {
         return repo.save(t);
     }
 
-    // Получить только задачи текущего пользователя
     public List<Task> getAll(String username) {
         User user = getUser(username);
         return repo.findByUserId(user.getId());
     }
 
-    // Отметить задачу выполненной
     public Task complete(Long id, String username) {
         User user = getUser(username);
         Task t = repo.findById(id).orElseThrow();
 
-        // Проверяем что задача принадлежит этому пользователю
         if (!t.getUserId().equals(user.getId())) {
             throw new RuntimeException("Access denied");
         }
@@ -55,7 +50,6 @@ public class TaskService {
         return repo.save(t);
     }
 
-    // Удалить задачу
     public void delete(Long id, String username) {
         User user = getUser(username);
         Task t = repo.findById(id).orElseThrow();

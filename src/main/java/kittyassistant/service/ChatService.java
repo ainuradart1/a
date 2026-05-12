@@ -105,7 +105,6 @@ public class ChatService {
                 return "Ошибка API: " + msg;
             }
 
-            // Groq использует OpenAI формат: choices[0].message.content
             return root
                     .path("choices").get(0)
                     .path("message")

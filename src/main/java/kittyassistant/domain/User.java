@@ -22,8 +22,6 @@ public class User {
     private String username;
     private String password;
     private String picture;
-
-    // Поле "О себе"
     @Column(length = 500)
     private String bio;
 

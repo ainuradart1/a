@@ -26,7 +26,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         String picture = (String) attributes.get("picture");
         String sub     = (String) attributes.get("sub");
 
-        // Ищем пользователя по email — если нет, создаём
         User user = userRepository.findByEmail(email).orElseGet(() -> {
             User newUser = new User();
             newUser.setEmail(email);
@@ -36,8 +35,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             newUser.setRole("USER");
             return newUser;
         });
-
-        // Обновляем имя и аватар при каждом входе
         user.setUsername(name);
         user.setPicture(picture);
         userRepository.save(user);

@@ -16,8 +16,6 @@ public class MoodEntry {
     private Long id;
 
     private Long userId;
-
-    // 1=очень плохо, 2=плохо, 3=нейтрально, 4=хорошо, 5=отлично
     private Integer mood;
 
     private LocalDate date;

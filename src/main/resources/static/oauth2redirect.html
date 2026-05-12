@@ -8,7 +8,6 @@
     const name  = params.get('name');
 
     if (token) {
-      // Сохраняем токен и реальное имя из Google
       localStorage.setItem('k_token', token);
       localStorage.setItem('k_user', name || 'Пользователь');
       window.location.href = '/';

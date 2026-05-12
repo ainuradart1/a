@@ -48,7 +48,6 @@ public class StudySessionService {
         return repo.save(s);
     }
 
-    /** Сессии за сегодня (для статистики на фронте) */
     public List<StudySession> getToday(String username) {
         Long uid = getUser(username).getId();
         LocalDateTime from = LocalDate.now().atStartOfDay();

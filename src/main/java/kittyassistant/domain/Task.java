@@ -13,8 +13,6 @@ public class Task {
     private String title;
 
     private Boolean completed = false;
-
-    // Привязка задачи к пользователю (нужно для аналитики)
     private Long userId;
 
     public Task() {}

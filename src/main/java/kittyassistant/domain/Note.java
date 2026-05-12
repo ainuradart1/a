@@ -12,8 +12,6 @@ public class Note {
     private Long id;
 
     private String author;
-
-    // Привязка к пользователю
     private Long userId;
 
     private String title;

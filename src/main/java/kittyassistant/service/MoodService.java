@@ -24,7 +24,6 @@ public class MoodService {
                                 new UsernameNotFoundException("User not found: " + username)));
     }
 
-    // Сохранить или обновить настроение за сегодня
     public MoodEntry saveToday(Integer mood, String username) {
         User user = getUser(username);
         LocalDate today = LocalDate.now();
@@ -40,8 +39,6 @@ public class MoodService {
         entry.setMood(mood);
         return repo.save(entry);
     }
-
-    // Последние 7 дней
     public List<MoodEntry> getLast7Days(String username) {
         return repo.findByUserIdOrderByDateDesc(getUser(username).getId())
                 .stream().limit(7).toList();

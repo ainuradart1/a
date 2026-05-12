@@ -16,18 +16,15 @@ public class AnalyticsService {
     private final DailySnapshotRepository snapshotRepository;
     private final TaskRepository taskRepository;
     private final UserRepository userRepository;
-
-    // Последние 7 дней снапшотов для пользователя
     public List<DailyProductivitySnapshot> getLast7Days(String email) {
         Long userId = userRepository.findByEmail(email)
                 .orElseThrow().getId();
         List<DailyProductivitySnapshot> list =
                 snapshotRepository.findTop7ByUserIdOrderByDateDesc(userId);
-        Collections.reverse(list); // сортируем от старых к новым
+        Collections.reverse(list);
         return list;
     }
 
-    // Сводка за неделю
     public Map<String, Object> getWeeklySummary(String email) {
         List<DailyProductivitySnapshot> data = getLast7Days(email);
 
@@ -41,7 +38,6 @@ public class AnalyticsService {
         summary.put("avgMood", Math.round(avgMood * 10.0) / 10.0);
         summary.put("daysTracked", data.size());
 
-        // Лучший день по фокусу
         data.stream()
                 .max(Comparator.comparingInt(DailyProductivitySnapshot::getFocusMinutes))
                 .ifPresent(best -> summary.put("bestDay", best.getDate().toString()));
@@ -49,17 +45,13 @@ public class AnalyticsService {
         return summary;
     }
 
-    // Создать или обновить снапшот на сегодня (для ручного теста)
     public void aggregateToday(String email) {
         Long userId = userRepository.findByEmail(email)
                 .orElseThrow().getId();
         LocalDate today = LocalDate.now();
 
-        // Если снапшот за сегодня уже есть — пропустить
         if (snapshotRepository.existsByUserIdAndDate(userId, today)) return;
 
-        // Считаем задачи выполненные сегодня
-        // (адаптируй под свою модель Task)
         int tasksDone = taskRepository.findAll().stream()
                 .filter(t -> t.getUserId() != null && t.getUserId().equals(userId))
                 .filter(t -> Boolean.TRUE.equals(t.getCompleted()))
@@ -68,9 +60,9 @@ public class AnalyticsService {
         DailyProductivitySnapshot snap = new DailyProductivitySnapshot();
         snap.setDate(today);
         snap.setUserId(userId);
-        snap.setFocusMinutes(0);   // обновится когда добавишь FocusSession entity
+        snap.setFocusMinutes(0);
         snap.setTasksDone(tasksDone);
-        snap.setAvgMood(3.0);      // обновится когда добавишь MoodLog entity
+        snap.setAvgMood(3.0);
         snap.setHabitsCompleted(0);
 
         snapshotRepository.save(snap);

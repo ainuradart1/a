@@ -41,7 +41,6 @@ public class OAuth2SuccessHandler
 
         String token = jwtService.generateToken(subject);
 
-        // Передаём и токен и имя в URL
         String encodedName = URLEncoder.encode(
                 name != null ? name : subject,
                 StandardCharsets.UTF_8);

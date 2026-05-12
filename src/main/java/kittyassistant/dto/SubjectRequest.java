@@ -1,6 +1,5 @@
 package kittyassistant.dto;
 
-// ── SubjectRequest ─────────────────────────────────────────────
 public class SubjectRequest {
     private String name;
     private String emoji;

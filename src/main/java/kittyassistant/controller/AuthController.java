@@ -46,7 +46,6 @@ public class AuthController {
         return ResponseEntity.status(401).body("INVALID_CREDENTIALS");
     }
 
-    // После Google входа — редиректим на html файл
     @GetMapping("/oauth2/redirect")
     public void oauth2Redirect(@RequestParam String token,
                                HttpServletResponse response) throws IOException {

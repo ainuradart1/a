@@ -17,8 +17,6 @@ import java.util.LinkedHashMap;
 public class ProfileController {
 
     private final UserRepository userRepository;
-
-    // Получить профиль текущего пользователя
     @GetMapping
     public ResponseEntity<Map<String, Object>> getProfile(
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -39,7 +37,6 @@ public class ProfileController {
         return ResponseEntity.ok(profile);
     }
 
-    // Обновить профиль
     @PutMapping
     public ResponseEntity<Map<String, Object>> updateProfile(
             @AuthenticationPrincipal UserDetails userDetails,

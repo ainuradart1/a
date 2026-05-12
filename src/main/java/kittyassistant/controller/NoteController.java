@@ -18,7 +18,6 @@ public class NoteController {
     public NoteController(NoteService service) {
         this.service = service;
     }
-
     // Создать заметку
     @PostMapping
     public ResponseEntity<Note> create(
@@ -31,7 +30,6 @@ public class NoteController {
         );
         return ResponseEntity.ok(note);
     }
-
     // Получить все заметки текущего пользователя
     @GetMapping
     public ResponseEntity<List<Note>> getAll(
@@ -39,7 +37,6 @@ public class NoteController {
         return ResponseEntity.ok(
                 service.getByUser(userDetails.getUsername()));
     }
-
     // Удалить заметку
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(

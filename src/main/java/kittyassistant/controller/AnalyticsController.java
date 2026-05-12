@@ -17,7 +17,6 @@ public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
 
-    // Данные за 7 дней для Chart.js
     @GetMapping("/weekly")
     public ResponseEntity<List<DailyProductivitySnapshot>> getWeekly(
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -25,7 +24,6 @@ public class AnalyticsController {
                 analyticsService.getLast7Days(userDetails.getUsername()));
     }
 
-    // Сводка: итого за неделю
     @GetMapping("/summary")
     public ResponseEntity<Map<String, Object>> getSummary(
             @AuthenticationPrincipal UserDetails userDetails) {
@@ -33,7 +31,6 @@ public class AnalyticsController {
                 analyticsService.getWeeklySummary(userDetails.getUsername()));
     }
 
-    // Ручной запуск агрегации (для тестов)
     @PostMapping("/aggregate")
     public ResponseEntity<String> runAggregation(
             @AuthenticationPrincipal UserDetails userDetails) {
