@@ -39,6 +39,7 @@ public class SecurityConfig {
                                 "/oauth2redirect.html",
                                 "/login",
                                 "/register",
+                                "/**.mp3",
                                 "/auth/**",
                                 "/api/auth/**",
                                 "/oauth2/**",
