@@ -84,8 +84,6 @@
 
         .profile-modal{background:var(--card);border-radius:22px;width:400px;max-width:calc(100vw - 24px);box-shadow:0 12px 60px rgba(107,63,160,.32),0 2px 8px rgba(0,0,0,.1);overflow:hidden;position:fixed;z-index:501;}
 
-
-
         @keyframes dropDown{from{opacity:0;transform:translateY(-10px) scale(.97)}to{opacity:1;transform:none}}
 
         @keyframes dropUp{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
@@ -1040,6 +1038,12 @@
 
         @media(max-width:600px){.dash-row{grid-template-columns:1fr!important;}.dashboard{padding:14px 14px 140px;}#chat-widget{width:calc(100vw - 16px);right:8px;}.drawer{width:100vw;}}
 
+
+        .mic-btn{width:36px;height:36px;border-radius:50%;flex-shrink:0;background:var(--purple-light);border:2px solid var(--border);cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;color:var(--purple);}
+        .mic-btn:hover{background:var(--bg2);}
+        .mic-btn.listening{background:#fee2e2;border-color:var(--red);color:var(--red);animation:micPulse 1s ease-in-out infinite;}
+        @keyframes micPulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.4)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+
     </style>
 
 </head>
@@ -1047,7 +1051,6 @@
 <body>
 
 <div class="bg-blobs"><div class="blob blob-1"></div><div class="blob blob-2"></div><div class="blob blob-3"></div></div>
-
 
 <div class="profile-overlay" id="profileOverlay" onclick="closeProfileIfOutside(event)">
 
@@ -1080,7 +1083,6 @@
             </div>
 
         </div>
-
 
         <div class="pm-identity">
 
@@ -1894,7 +1896,7 @@
 
         </div>
 
-        <div id="chat-tab"><div id="messages"></div><div class="chat-row"><input id="msg-in" type="text" class="chat-in" placeholder="Спроси что угодно..." onkeydown="if(event.key==='Enter')sendMsg()"><button class="send-btn" onclick="sendMsg()">➤</button></div></div>
+        <div id="chat-tab"><div id="messages"></div><div class="chat-row"><button class="mic-btn" id="micBtn" onclick="toggleVoice()" title="Голосовой ввод">🎤</button><input id="msg-in" type="text" class="chat-in" placeholder="Спроси что угодно..." onkeydown="if(event.key==='Enter')sendMsg()"><button class="send-btn" onclick="sendMsg()">➤</button></div></div>
 
         <div id="tasks-tab"><div id="tasks-list"></div><div class="task-row"><input id="task-in" type="text" class="task-in" placeholder="Новая задача..." onkeydown="if(event.key==='Enter')addTask()"><button class="add-btn" onclick="addTask()">+</button></div></div>
 
@@ -2205,27 +2207,49 @@
         if(!token)return;
 
         // Position modal near the profile button
+
         const btn = document.getElementById('tbUser');
+
         const modal = document.querySelector('.profile-modal');
+
         if(btn && modal){
+
             const r = btn.getBoundingClientRect();
+
             const mw = Math.min(400, window.innerWidth - 24);
+
             let left = r.right - mw;
+
             if(left < 12) left = 12;
+
             modal.style.left = left + 'px';
+
             modal.style.right = 'auto';
+
             modal.style.width = mw + 'px';
+
             const spaceBelow = window.innerHeight - r.bottom;
+
             const spaceAbove = r.top;
+
             if(spaceBelow >= 320 || spaceBelow >= spaceAbove){
+
                 modal.style.top = (r.bottom + 8) + 'px';
+
                 modal.style.bottom = 'auto';
+
                 modal.style.animation = 'dropDown .28s cubic-bezier(.22,.68,0,1.2)';
+
             } else {
+
                 modal.style.bottom = (window.innerHeight - r.top + 8) + 'px';
+
                 modal.style.top = 'auto';
+
                 modal.style.animation = 'dropUp .28s cubic-bezier(.22,.68,0,1.2)';
+
             }
+
         }
 
         document.getElementById('profileOverlay').classList.add('open');
@@ -2497,6 +2521,59 @@
     function toggleSubjForm(){subjFormOpen=!subjFormOpen;document.getElementById('subjFormBox').classList.toggle('hidden',!subjFormOpen);if(subjFormOpen){initClrPicker();document.getElementById('subjNameInp').focus();}}
 
     async function saveSubject(){const name=document.getElementById('subjNameInp').value.trim();if(!name)return;const subj={name,color:selColor,progressPercent:0};if(token)try{const s=await fetch(`${API}/api/study/subjects`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(subj)}).then(r=>r.json());studySubjects.push(s);}catch{studySubjects.push({...subj,id:Date.now()});}else studySubjects.push({...subj,id:Date.now()});document.getElementById('subjNameInp').value='';toggleSubjForm();renderSubjects();}
+
+
+    // VOICE INPUT
+    let recognition = null;
+    let isListening = false;
+
+    function initSpeechRecognition() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR) return null;
+        const r = new SR();
+        r.lang = 'ru-RU';
+        r.continuous = false;
+        r.interimResults = true;
+        r.onresult = (e) => {
+            const transcript = Array.from(e.results).map(res => res[0].transcript).join('');
+            document.getElementById('msg-in').value = transcript;
+            if (e.results[e.results.length - 1].isFinal) {
+                stopVoice();
+                setTimeout(sendMsg, 200);
+            }
+        };
+        r.onerror = (e) => {
+            stopVoice();
+            if (e.error === 'not-allowed') alert('Разрешите доступ к микрофону в настройках браузера');
+        };
+        r.onend = () => stopVoice();
+        return r;
+    }
+
+    function toggleVoice() {
+        isListening ? stopVoice() : startVoice();
+    }
+
+    function startVoice() {
+        if (!recognition) recognition = initSpeechRecognition();
+        if (!recognition) { alert('Голосовой ввод не поддерживается. Используйте Chrome или Edge.'); return; }
+        try {
+            recognition.start();
+            isListening = true;
+            document.getElementById('micBtn').classList.add('listening');
+            document.getElementById('micBtn').textContent = '🔴';
+            document.getElementById('msg-in').placeholder = 'Говорите...';
+        } catch(e) { console.error(e); }
+    }
+
+    function stopVoice() {
+        if (recognition) try { recognition.stop(); } catch(e) {}
+        isListening = false;
+        const btn = document.getElementById('micBtn');
+        if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
+        const inp = document.getElementById('msg-in');
+        if (inp) inp.placeholder = 'Спроси что угодно...';
+    }
 
 </script>
 
