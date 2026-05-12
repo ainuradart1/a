@@ -76,19 +76,19 @@
 
         //PROFILE
 
-        .profile-overlay{position:fixed;inset:0;background:rgba(20,15,40,.18);z-index:500;display:none;align-items:flex-start;justify-content:flex-end;padding-top:70px;padding-right:14px;}
+        .profile-overlay{position:fixed;inset:0;background:rgba(20,15,40,.18);z-index:500;display:none;}
 
-        .profile-overlay.open{display:flex;animation:fadeIn .2s;}
+        .profile-overlay.open{display:block;animation:fadeIn .2s;}
 
         @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 
-        .profile-modal{background:var(--card);border-radius:22px;width:420px;max-width:calc(100vw - 28px);box-shadow:0 12px 60px rgba(107,63,160,.28),0 2px 8px rgba(0,0,0,.08);animation:dropDown .28s cubic-bezier(.22,.68,0,1.2);overflow:hidden;position:relative;}
+        .profile-modal{background:var(--card);border-radius:22px;width:400px;max-width:calc(100vw - 24px);box-shadow:0 12px 60px rgba(107,63,160,.32),0 2px 8px rgba(0,0,0,.1);overflow:hidden;position:fixed;z-index:501;}
 
-        .profile-modal::before{content:'';position:absolute;top:-8px;right:54px;width:16px;height:16px;background:var(--card);transform:rotate(45deg);border-radius:3px 0 0 0;box-shadow:-2px -2px 6px rgba(107,63,160,.08);}
 
-        @keyframes dropDown{from{opacity:0;transform:translateY(-12px) scale(.97)}to{opacity:1;transform:none}}
 
-        @keyframes slideUp{from{opacity:0;transform:translateY(28px) scale(.96)}to{opacity:1;transform:none}}
+        @keyframes dropDown{from{opacity:0;transform:translateY(-10px) scale(.97)}to{opacity:1;transform:none}}
+
+        @keyframes dropUp{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
 
         /* Cover */
 
@@ -1380,7 +1380,7 @@
 
                 </div>
 
-                <div class="focus-meow"><div style="font-size:1.6rem">🐱</div><div class="focus-meow-txt" id="studyKittyMsg">Начни сессию !</div></div>
+                <div class="focus-meow"><div style="font-size:1.6rem">🐱</div><div class="focus-meow-txt" id="studyKittyMsg">Начни сессию — котик будет болеть за тебя!</div></div>
 
             </div>
 
@@ -2206,6 +2206,30 @@
 
         if(!token)return;
 
+        // Position modal near the profile button
+        const btn = document.getElementById('tbUser');
+        const modal = document.querySelector('.profile-modal');
+        if(btn && modal){
+            const r = btn.getBoundingClientRect();
+            const mw = Math.min(400, window.innerWidth - 24);
+            let left = r.right - mw;
+            if(left < 12) left = 12;
+            modal.style.left = left + 'px';
+            modal.style.right = 'auto';
+            modal.style.width = mw + 'px';
+            const spaceBelow = window.innerHeight - r.bottom;
+            const spaceAbove = r.top;
+            if(spaceBelow >= 320 || spaceBelow >= spaceAbove){
+                modal.style.top = (r.bottom + 8) + 'px';
+                modal.style.bottom = 'auto';
+                modal.style.animation = 'dropDown .28s cubic-bezier(.22,.68,0,1.2)';
+            } else {
+                modal.style.bottom = (window.innerHeight - r.top + 8) + 'px';
+                modal.style.top = 'auto';
+                modal.style.animation = 'dropUp .28s cubic-bezier(.22,.68,0,1.2)';
+            }
+        }
+
         document.getElementById('profileOverlay').classList.add('open');
 
         document.body.style.overflow='hidden';
@@ -2428,7 +2452,7 @@
 
     let focusActive=false,focusSessCount=0,focusStartTime=null,focusTotalMins=0;
 
-    function toggleStudyFocus(){focusActive=!focusActive;const btn=document.getElementById('studyFocusBtn');const msg=document.getElementById('studyKittyMsg');if(focusActive){btn.textContent='⏹ Завершить сессию';btn.className='focus-start-btn running';msg.textContent='Держи фокус 💪';focusStartTime=Date.now();if(token){const goal=document.getElementById('studyGoalInp').value.trim();fetch(`${API}/api/study/sessions/start`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({goalText:goal})}).catch(()=>{});}}else{btn.textContent='▶ Начать фокус-сессию';btn.className='focus-start-btn idle';msg.textContent='Отличная работа! Начни следующую сессию, когда будешь готов.';const elapsed=focusStartTime?Math.round((Date.now()-focusStartTime)/60000):0;focusTotalMins+=elapsed||25;focusSessCount++;focusStartTime=null;document.getElementById('studySessCount').textContent=focusSessCount;document.getElementById('studyFocusMins').textContent=focusTotalMins+'м';if(token)fetch(`${API}/api/study/sessions/end`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({durationMinutes:elapsed||25})}).catch(()=>{});}}
+    function toggleStudyFocus(){focusActive=!focusActive;const btn=document.getElementById('studyFocusBtn');const msg=document.getElementById('studyKittyMsg');if(focusActive){btn.textContent='⏹ Завершить сессию';btn.className='focus-start-btn running';msg.textContent='Котик болеет за тебя! Держи фокус 💪';focusStartTime=Date.now();if(token){const goal=document.getElementById('studyGoalInp').value.trim();fetch(`${API}/api/study/sessions/start`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({goalText:goal})}).catch(()=>{});}}else{btn.textContent='▶ Начать фокус-сессию';btn.className='focus-start-btn idle';msg.textContent='Отличная работа! Начни следующую сессию, когда будешь готов.';const elapsed=focusStartTime?Math.round((Date.now()-focusStartTime)/60000):0;focusTotalMins+=elapsed||25;focusSessCount++;focusStartTime=null;document.getElementById('studySessCount').textContent=focusSessCount;document.getElementById('studyFocusMins').textContent=focusTotalMins+'м';if(token)fetch(`${API}/api/study/sessions/end`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({durationMinutes:elapsed||25})}).catch(()=>{});}}
 
     let fcCards=[{id:1,frontText:'Что такое полиморфизм?',backText:'Способность объектов разных классов работать через единый интерфейс',sub:'Java'},{id:2,frontText:'HashMap vs LinkedHashMap',backText:'LinkedHashMap сохраняет порядок вставки, HashMap — нет',sub:'Java'},{id:3,frontText:'Что такое Stream API?',backText:'Функциональный способ работы с коллекциями в Java 8+',sub:'Java'}];
 
