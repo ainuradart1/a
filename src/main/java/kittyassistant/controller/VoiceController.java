@@ -31,10 +31,21 @@ public class VoiceController {
         try {
             String boundary = "----boundary" + System.currentTimeMillis();
 
-            byte[] audioBytes = audio.getBytes();
-            String fileName = "audio.webm";
+            // Определяем формат аудио из content type
+            String contentType = audio.getContentType();
+            String fileName;
+            String audioMimeType;
 
-            byte[] body = buildMultipartBody(boundary, audioBytes, fileName);
+            if (contentType != null && contentType.contains("mp4")) {
+                fileName = "audio.mp4";
+                audioMimeType = "audio/mp4";
+            } else {
+                fileName = "audio.webm";
+                audioMimeType = "audio/webm";
+            }
+
+            byte[] audioBytes = audio.getBytes();
+            byte[] body = buildMultipartBody(boundary, audioBytes, fileName, audioMimeType);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(GROQ_WHISPER_URL))
@@ -48,8 +59,14 @@ public class VoiceController {
                     .send(request, HttpResponse.BodyHandlers.ofString());
 
             String json = response.body();
-            String text = extractText(json);
 
+            // Если ошибка от Groq — вернём её
+            if (json.contains("\"error\"")) {
+                return ResponseEntity.internalServerError()
+                        .body("Ошибка Groq: " + json);
+            }
+
+            String text = extractText(json);
             return ResponseEntity.ok(text);
 
         } catch (Exception e) {
@@ -60,24 +77,40 @@ public class VoiceController {
 
     private byte[] buildMultipartBody(String boundary,
                                       byte[] audio,
-                                      String fileName) throws Exception {
+                                      String fileName,
+                                      String audioMimeType) throws Exception {
         String CRLF = "\r\n";
         StringBuilder sb = new StringBuilder();
 
+        // Модель — turbo лучше работает с русским
         sb.append("--").append(boundary).append(CRLF);
         sb.append("Content-Disposition: form-data; name=\"model\"")
                 .append(CRLF).append(CRLF);
-        sb.append("whisper-large-v3").append(CRLF);
+        sb.append("whisper-large-v3-turbo").append(CRLF);
 
+        // Язык — явно указываем русский
         sb.append("--").append(boundary).append(CRLF);
         sb.append("Content-Disposition: form-data; name=\"language\"")
                 .append(CRLF).append(CRLF);
         sb.append("ru").append(CRLF);
 
+        // Подсказка — помогает Whisper не галлюцинировать
+        sb.append("--").append(boundary).append(CRLF);
+        sb.append("Content-Disposition: form-data; name=\"prompt\"")
+                .append(CRLF).append(CRLF);
+        sb.append("Пользователь говорит на русском языке. Запрос к ИИ ассистенту.").append(CRLF);
+
+        // Формат ответа
+        sb.append("--").append(boundary).append(CRLF);
+        sb.append("Content-Disposition: form-data; name=\"response_format\"")
+                .append(CRLF).append(CRLF);
+        sb.append("json").append(CRLF);
+
+        // Аудио файл
         sb.append("--").append(boundary).append(CRLF);
         sb.append("Content-Disposition: form-data; name=\"file\"; filename=\"")
                 .append(fileName).append("\"").append(CRLF);
-        sb.append("Content-Type: audio/webm").append(CRLF).append(CRLF);
+        sb.append("Content-Type: ").append(audioMimeType).append(CRLF).append(CRLF);
 
         byte[] prefix = sb.toString().getBytes();
         byte[] suffix = (CRLF + "--" + boundary + "--" + CRLF).getBytes();
