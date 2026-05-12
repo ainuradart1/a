@@ -2523,57 +2523,68 @@
     async function saveSubject(){const name=document.getElementById('subjNameInp').value.trim();if(!name)return;const subj={name,color:selColor,progressPercent:0};if(token)try{const s=await fetch(`${API}/api/study/subjects`,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify(subj)}).then(r=>r.json());studySubjects.push(s);}catch{studySubjects.push({...subj,id:Date.now()});}else studySubjects.push({...subj,id:Date.now()});document.getElementById('subjNameInp').value='';toggleSubjForm();renderSubjects();}
 
 
-    // VOICE INPUT
-    let recognition = null;
-    let isListening = false;
+ // VOICE INPUT (через сервер)
+let mediaRecorder = null;
+let audioChunks = [];
+let isListening = false;
 
-    function initSpeechRecognition() {
-        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SR) return null;
-        const r = new SR();
-        r.lang = 'ru-RU';
-        r.continuous = false;
-        r.interimResults = true;
-        r.onresult = (e) => {
-            const transcript = Array.from(e.results).map(res => res[0].transcript).join('');
-            document.getElementById('msg-in').value = transcript;
-            if (e.results[e.results.length - 1].isFinal) {
-                stopVoice();
+function toggleVoice() {
+    isListening ? stopVoice() : startVoice();
+}
+
+async function startVoice() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+
+        // Собираем кусочки аудио
+        mediaRecorder.ondataavailable = (e) => {
+            audioChunks.push(e.data);
+        };
+
+        // Когда запись остановлена — отправляем на сервер
+        mediaRecorder.onstop = async () => {
+            const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+            const formData = new FormData();
+            formData.append('audio', audioBlob, 'audio.webm');
+
+            document.getElementById('msg-in').placeholder = 'Распознаю...';
+
+            try {
+                const res = await fetch(`${API}/api/voice/transcribe`, {
+                    method: 'POST',
+                    headers: token ? { 'Authorization': 'Bearer ' + token } : {},
+                    body: formData
+                });
+                const text = await res.text();
+                document.getElementById('msg-in').value = text;
                 setTimeout(sendMsg, 200);
+            } catch (e) {
+                alert('Ошибка распознавания');
             }
         };
-        r.onerror = (e) => {
-            stopVoice();
-            if (e.error === 'not-allowed') alert('Разрешите доступ к микрофону в настройках браузера');
-        };
-        r.onend = () => stopVoice();
-        return r;
-    }
 
-    function toggleVoice() {
-        isListening ? stopVoice() : startVoice();
-    }
+        mediaRecorder.start();
+        isListening = true;
+        document.getElementById('micBtn').classList.add('listening');
+        document.getElementById('micBtn').textContent = '🔴';
+        document.getElementById('msg-in').placeholder = 'Говорите...';
 
-    function startVoice() {
-        if (!recognition) recognition = initSpeechRecognition();
-        if (!recognition) { alert('Голосовой ввод не поддерживается. Используйте Chrome или Edge.'); return; }
-        try {
-            recognition.start();
-            isListening = true;
-            document.getElementById('micBtn').classList.add('listening');
-            document.getElementById('micBtn').textContent = '🔴';
-            document.getElementById('msg-in').placeholder = 'Говорите...';
-        } catch(e) { console.error(e); }
+    } catch (e) {
+        alert('Разрешите доступ к микрофону');
     }
+}
 
-    function stopVoice() {
-        if (recognition) try { recognition.stop(); } catch(e) {}
-        isListening = false;
-        const btn = document.getElementById('micBtn');
-        if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
-        const inp = document.getElementById('msg-in');
-        if (inp) inp.placeholder = 'Спроси что угодно...';
+function stopVoice() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(t => t.stop());
     }
+    isListening = false;
+    const btn = document.getElementById('micBtn');
+    if (btn) { btn.classList.remove('listening'); btn.textContent = '🎤'; }
+}
 
 </script>
 
