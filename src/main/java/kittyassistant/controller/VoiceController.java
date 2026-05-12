@@ -82,25 +82,21 @@ public class VoiceController {
         String CRLF = "\r\n";
         StringBuilder sb = new StringBuilder();
 
-        // Модель — turbo лучше работает с русским
         sb.append("--").append(boundary).append(CRLF);
         sb.append("Content-Disposition: form-data; name=\"model\"")
                 .append(CRLF).append(CRLF);
         sb.append("whisper-large-v3-turbo").append(CRLF);
 
-        // Язык — явно указываем русский
         sb.append("--").append(boundary).append(CRLF);
         sb.append("Content-Disposition: form-data; name=\"language\"")
                 .append(CRLF).append(CRLF);
         sb.append("ru").append(CRLF);
 
-        // Подсказка — помогает Whisper не галлюцинировать
         sb.append("--").append(boundary).append(CRLF);
         sb.append("Content-Disposition: form-data; name=\"prompt\"")
                 .append(CRLF).append(CRLF);
         sb.append("Пользователь говорит на русском языке. Запрос к ИИ ассистенту.").append(CRLF);
 
-        // Формат ответа
         sb.append("--").append(boundary).append(CRLF);
         sb.append("Content-Disposition: form-data; name=\"response_format\"")
                 .append(CRLF).append(CRLF);
